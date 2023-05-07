@@ -1,0 +1,29 @@
+apply plugin: 'java'
+apply plugin: 'maven-publish'
+
+version = '1.0'
+
+group = 'com.obliquity.astronomy'
+
+sourceCompatibility = '16'
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'com.obliquity.astronomy.tass17.test.TestReader'
+    }
+}
+
+publishing {
+    publications {
+        myLibrary(MavenPublication) {
+            from components.java
+        }
+    }
+
+    repositories {
+        maven {
+            name = 'myRepo'
+            url = "file://${buildDir}/repo"
+        }
+    }
+}
