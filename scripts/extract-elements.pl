@@ -15,7 +15,7 @@ while (my $line = <STDIN>) {
         last if ($satnum == 7);
 
         my @data;
-        my $ncrit;
+        my $ncrit = 0;
 
         while ($line = <STDIN>) {
             $linenum++;
