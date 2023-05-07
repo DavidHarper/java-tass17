@@ -41,8 +41,8 @@ public class TASSDataFileReader {
 		if (headerData[1] == 2) {
 			String line = br.readLine().strip();
 			String[] words = line.split("\s+");
-			result.setConstantTerm(Double.parseDouble(words[0]));
-			result.setSecularRate(Double.parseDouble(words[1]));
+			result.setConstantTerm(Double.parseDouble(words[1]));
+			result.setSecularRate(Double.parseDouble(words[2]));
 			nTerms--;
 		}
 		
