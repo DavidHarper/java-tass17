@@ -36,4 +36,10 @@ public class TASSElementSeries {
 	public int getNumberOfCriticalTerms() {
 		return nCriticalTerms;
 	}
+	
+	public String toString() {
+		return getClass().getName() + "[ constantTerm = " + constantTerm
+				+ ", secularRate = " + secularRate
+				+ ", array of " + periodicTerms.length + " periodic terms (" + nCriticalTerms + " critical) ]";
+	}
 }
