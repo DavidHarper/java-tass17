@@ -4,8 +4,6 @@ public class TASSPeriodicTerm {
 	protected double amplitude, phase, frequency;
 	protected int[] longPeriodCoefficients;
 	
-	private final double TWO_PI = 2.0 * Math.PI;
-	
 	public TASSPeriodicTerm(double amplitude, double phase, double frequency, int[] longPeriodCoefficients) {
 		this.amplitude = amplitude;
 		this.phase = phase;
@@ -18,7 +16,7 @@ public class TASSPeriodicTerm {
 	}
 	
 	public double getArgument(double t, double[] longPeriodLongitudes) {
-		double argument = phase + (frequency * t) % TWO_PI;
+		double argument = phase;
 		
 		if (longPeriodCoefficients != null && longPeriodLongitudes != null) {
 			int nCoeffs = longPeriodCoefficients.length;
@@ -30,6 +28,8 @@ public class TASSPeriodicTerm {
 				if (longPeriodCoefficients[i] != 0)
 					argument += longPeriodLongitudes[i] * (double)longPeriodCoefficients[i];
 		}
+		
+		argument += frequency * t;
 		
 		return argument;
 	}
