@@ -37,6 +37,10 @@ public class TASSElementSeries {
 		return nCriticalTerms;
 	}
 	
+	public double calculateLinearTerm(double t) {
+		return constantTerm + t * secularRate;
+	}
+	
 	public double calculateCriticalTermsInSine(double t, double[] longPeriodLongitudes) {
 		double value = 0.0;
 		
