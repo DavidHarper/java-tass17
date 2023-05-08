@@ -43,7 +43,6 @@ public class TASSDataFileReader {
 			String[] words = line.split("\s+");
 			result.setConstantTerm(Double.parseDouble(words[1]));
 			result.setSecularRate(Double.parseDouble(words[2]));
-			nTerms--;
 		}
 		
 		TASSPeriodicTerm[] terms = new TASSPeriodicTerm[nTerms];

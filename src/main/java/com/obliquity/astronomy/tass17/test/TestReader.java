@@ -42,7 +42,6 @@ public class TestReader {
     	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     	
     	double[] deltaLambda = new double[8];
-    	double[] elements = new double[6];
     	    	
     	while (true) {
     		String line = br.readLine();
@@ -55,23 +54,28 @@ public class TestReader {
     		System.out.printf(" %13.5f  ", jd);
   		
     		for (int iSat = 0; iSat < 8; iSat++) {
-    			double t = (jd - (iSat == 6 ? TASSConstants.EPOCH_HYPERION : TASSConstants.EPOCH))/365.25;
+    			double t = (jd - TASSConstants.EPOCH)/365.25;
     			
-    			deltaLambda[iSat] = elementSeries[iSat][1].calculateCriticalTermsInSine(t, null);
+    			if (iSat == 6)
+    				deltaLambda[iSat] = 0.0;
+    			else
+    				deltaLambda[iSat] = elementSeries[iSat][1].calculateCriticalTermsInSine(t, null);
     			
     			System.out.printf(" %13.8f", deltaLambda[iSat]);
     		}
     		
     		System.out.println();
     		
-    		System.out.printf(" %13.5f  ", jd);
-    		
-    		for (int iSat = 0; iSat < 0; iSat++) {
+    		for (int iSat = 0; iSat < 8; iSat++) {
     			double t = (jd - (iSat == 6 ? TASSConstants.EPOCH_HYPERION : TASSConstants.EPOCH))/365.25;
     			
-    			double np = elementSeries[iSat][0].getConstantTerm() + elementSeries[iSat][0].calculateAllTermsInSine(t, deltaLambda);
+    			double np = elementSeries[iSat][0].getConstantTerm() + elementSeries[iSat][0].calculateAllTermsInCosine(t, deltaLambda);
     			
-    			double lambda = elementSeries[iSat][1].calculateLinearTerm(t) + deltaLambda[iSat] + elementSeries[iSat][1].calculateShortPeriodTermsInSine(t, deltaLambda);
+    			double lambda = (elementSeries[iSat][1].calculateLinearTerm(t) + deltaLambda[iSat] +
+    					elementSeries[iSat][1].calculateShortPeriodTermsInSine(t, deltaLambda)) % TWO_PI;
+    			
+    			if (lambda > Math.PI)
+    				lambda -= TWO_PI;
     			
     			double h = elementSeries[iSat][2].calculateAllTermsInCosine(t, deltaLambda);
     			
