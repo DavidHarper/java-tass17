@@ -21,6 +21,8 @@ public class TestReader {
     }
     
     public void run() throws IOException {
+    	boolean verbose = Boolean.getBoolean("verbose");
+    	
     	TASSDataFileReader tdfr = new TASSDataFileReader();
     	
     	TASSElementSeries[][] elementSeries = new TASSElementSeries[8][4];
@@ -29,11 +31,13 @@ public class TestReader {
     		for (int iElem = 0; iElem < 4; iElem++) {
     			String filename = String.format("/tass17/S%02d_%02d.dat", iSat+1, iElem+1);
     			
-    			System.out.println("Reading resource " + filename);
+    			if (verbose)
+    				System.out.println("Reading resource " + filename);
     			
     			TASSElementSeries result = tdfr.readTerms(filename);
     			
-    			System.out.println(result);
+    			if (verbose)
+    				System.out.println(result);
     			
     			elementSeries[iSat][iElem] = result;
     		}
@@ -67,7 +71,13 @@ public class TestReader {
     		System.out.println();
     		
     		for (int iSat = 0; iSat < 8; iSat++) {
-    			double t = (jd - (iSat == 6 ? TASSConstants.EPOCH_HYPERION : TASSConstants.EPOCH))/365.25;
+    			double t;
+    			
+    			if (iSat == 6) {
+    				t = jd - TASSConstants.EPOCH_HYPERION;
+    			} else {
+    				t = (jd - TASSConstants.EPOCH)/365.25;
+    			}
     			
     			double np = elementSeries[iSat][0].getConstantTerm() + elementSeries[iSat][0].calculateAllTermsInCosine(t, deltaLambda);
     			
@@ -76,6 +86,9 @@ public class TestReader {
     			
     			if (lambda > Math.PI)
     				lambda -= TWO_PI;
+    			
+    			if (lambda < -Math.PI)
+    				lambda += TWO_PI;
     			
     			double h = elementSeries[iSat][2].calculateAllTermsInCosine(t, deltaLambda);
     			
