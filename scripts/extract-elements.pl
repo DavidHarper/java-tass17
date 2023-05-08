@@ -31,6 +31,11 @@ while (my $line = <STDIN>) {
         }
 
         my $nterms = scalar(@data);
+        
+        if ($elnum == 2) {
+            $nterms--;
+            $ncrit-- if ($ncrit > 0);
+        }
 
         print " $ncrit $nterms\n";
 
