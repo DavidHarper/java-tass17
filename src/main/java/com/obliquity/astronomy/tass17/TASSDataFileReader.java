@@ -77,7 +77,6 @@ public class TASSDataFileReader {
 		if (headerData[1] < 3) {
 			String line = br.readLine().strip();
 			result.setConstantTerm(Double.parseDouble(line));
-			nTerms--;
 		}
 		
 		TASSPeriodicTerm[] terms = new TASSPeriodicTerm[nTerms];
