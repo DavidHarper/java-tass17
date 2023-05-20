@@ -23,6 +23,7 @@ public class TASSConstants {
 	
 	public static final double K_SQUARED = 0.01720209895E0;
 	public static final double MASS_OF_SATURN = 1.0/3498.790;
+	public static final double GK1 = Math.pow(K_SQUARED * 365.25, 2.0) * MASS_OF_SATURN;
 	
 	public static final double INCL_SATURN_EQUATOR = 28.0512 * Math.PI/180.0, NODE_SATURN_EQUATOR = 169.5291 * Math.PI/180.0;
 	
