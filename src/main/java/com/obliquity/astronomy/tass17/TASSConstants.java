@@ -27,6 +27,9 @@ public class TASSConstants {
 	
 	public static final double INCL_SATURN_EQUATOR = 28.0512 * Math.PI/180.0, NODE_SATURN_EQUATOR = 169.5291 * Math.PI/180.0;
 	
+	public static final double CI = Math.cos(INCL_SATURN_EQUATOR), SI = Math.sin(INCL_SATURN_EQUATOR);
+	public static final double CO = Math.cos(NODE_SATURN_EQUATOR), SO = Math.sin(NODE_SATURN_EQUATOR);
+	
 	public static final double MASSES[] = {	    
 	    1.0/0.1577287066246e+08,
 	    1.0/0.6666666666667E+07,
