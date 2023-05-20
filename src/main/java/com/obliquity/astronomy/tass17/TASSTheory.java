@@ -72,7 +72,7 @@ public class TASSTheory {
 				t = (jd - TASSConstants.EPOCH)/365.25;
 			}
 			
-			elements[iSat].meanMotion = elementSeries[iSat][0].getConstantTerm() + elementSeries[iSat][0].calculateAllTermsInCosine(t, deltaLambda);
+			elements[iSat].meanMotionAdjustment = elementSeries[iSat][0].getConstantTerm() + elementSeries[iSat][0].calculateAllTermsInCosine(t, deltaLambda);
 			
 			double lambda = (elementSeries[iSat][1].calculateLinearTerm(t) + deltaLambda[iSat] +
 					elementSeries[iSat][1].calculateShortPeriodTermsInSine(t, deltaLambda)) % TWO_PI;
@@ -105,7 +105,7 @@ public class TASSTheory {
 		if (position == null || position.length != 3)
 			position = new double[3];
 		
-		double am0 = TASSConstants.MEAN_MOTIONS[iSat]*(1.0 + elements.meanMotion);
+		double am0 = TASSConstants.MEAN_MOTIONS[iSat]*(1.0 + elements.meanMotionAdjustment);
 		double rmu = TASSConstants.GK1 * (1.0 + TASSConstants.MASSES[iSat]);
 		double dga = pow(rmu/(am0 * am0), ONE_THIRD);
 		
