@@ -42,6 +42,8 @@ public class TheoryTester {
     	
     	TASSElements[] elements = new TASSElements[8];
     	
+    	double[] position = new double[3];
+    	
     	while (true) {
     		String line = br.readLine();
     		
@@ -60,6 +62,8 @@ public class TheoryTester {
     					elements[iSat].k,
     					elements[iSat].p,
     					elements[iSat].q);
+    			
+    			theory.calculatePosition(iSat, elements[iSat], position);
     		}
     	}
     }
