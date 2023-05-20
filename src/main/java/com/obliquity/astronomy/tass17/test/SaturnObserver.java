@@ -40,7 +40,7 @@ public class SaturnObserver {
 	private final double cosObliquity, sinObliquity;
 
 	public static void main(String[] args) {
-		String ephemerisHomeName = System.getenv("saturnobserver.ephemerishome");
+		String ephemerisHomeName = System.getProperty("saturnobserver.ephemerishome");
 		
 		if (ephemerisHomeName == null) {
 			System.err.println("Set property saturnobserver.ephemerishome and re-run");
@@ -144,7 +144,7 @@ public class SaturnObserver {
    			double dy = (wx * xa + wy * ya + wz * za) * q;
    			double dz = (ux * xa + uy * ya + uz * za) * q;
    			
-   			System.out.printf(" %13.5f %1d  %8.3f  %8.3f  %8.3f ]\n", dx, dy, dz);
+   			System.out.printf(" %13.5f %1d  %8.3f  %8.3f  %8.3f ]\n", jd, iSat, dx, dy, dz);
    		}
 	}
 }
