@@ -109,6 +109,8 @@ public class TASSTheory {
 		double rmu = TASSConstants.GK1 * (1.0 + TASSConstants.MASSES[iSat]);
 		double dga = pow(rmu/(am0 * am0), ONE_THIRD);
 		
+		debug("dga", dga);
+		
 		double rl = elements.lambda;
 		double rk = elements.k;
 		double rh = elements.h;
@@ -144,8 +146,8 @@ public class TASSTheory {
 		debug("x1", x1);
 		debug("y1", y1);
 		
-		x1 *= dga;
-		y1 *= dga;
+		double r1 = sqrt(x1*x1+y1*y1);
+		debug("r1", r1);
 		
 		double p = elements.p;
 		double q = elements.q;
@@ -159,16 +161,26 @@ public class TASSTheory {
 		double y2 = x1 * rdg + y1 * rtq;
 		double z2 = (-x1 * p + y1 * q) * dwho;
 		
+		debug("x2,y2,z2", x2, y2, z2);
+		double r2 = sqrt(x2*x2+y2*y2+z2*z2);
+		debug("r2", r2);
+		
 		double CO = TASSConstants.CO;
 		double SO = TASSConstants.SO;
 		double CI = TASSConstants.CI;
 		double SI = TASSConstants.SI;
 		
-		position[0] = CO * x2 - SO * CI * y2 + SO * SI * z2;
-		position[1] = SO * x2 + CO * CI * y2 - CO * SI * z2;
-		position[2] =                SI * y2 + CI * z2;
+		double x3 = CO * x2 - SO * CI * y2 + SO * SI * z2;
+		double y3 = SO * x2 + CO * CI * y2 - CO * SI * z2;
+		double z3 =                SI * y2 + CI * z2;
 		
-		debug("position", position);
+		debug("x3,y3,z3", x3, y3, z3);
+		double r3 = sqrt(x3*x3+y3*y3+z3*z3);
+		debug("r3", r3);
+		
+		position[0] = x3 * dga;
+		position[1] = y3 * dga;
+		position[2] = z3 * dga;
 	}
 	
 	private static final boolean DEBUG = Boolean.getBoolean("debug");
@@ -178,8 +190,13 @@ public class TASSTheory {
 			System.err.printf("%-10s = %15.8f\n", name, value);
 	}
 	
-	private void debug(String name, double[] value) {
+	//private void debug(String name, double value1, double value2) {
+	//	if (DEBUG)
+	//		System.err.printf("%-10s = %15.8f %15.8f\n", name, value1, value2);
+	//}
+	
+	private void debug(String name, double value1, double value2, double value3) {
 		if (DEBUG)
-			System.err.printf("%-10s = %15.8f %15.8f %15.8f\n", name, value[0], value[1], value[2]);
+			System.err.printf("%-10s = %15.8f %15.8f %15.8f\n", name, value1, value2, value3);
 	}
 }
