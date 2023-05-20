@@ -85,13 +85,13 @@ public class TASSTheory {
 
 			elements[iSat].lambda = lambda;
 			
-			elements[iSat].h = elementSeries[iSat][2].calculateAllTermsInCosine(t, deltaLambda);
+			elements[iSat].k = elementSeries[iSat][2].calculateAllTermsInCosine(t, deltaLambda);
 			
-			elements[iSat].k = elementSeries[iSat][2].calculateAllTermsInSine(t, deltaLambda);
+			elements[iSat].h = elementSeries[iSat][2].calculateAllTermsInSine(t, deltaLambda);
 			
-			elements[iSat].p = elementSeries[iSat][3].calculateAllTermsInCosine(t, deltaLambda);
+			elements[iSat].q = elementSeries[iSat][3].calculateAllTermsInCosine(t, deltaLambda);
 			
-			elements[iSat].q = elementSeries[iSat][3].calculateAllTermsInSine(t, deltaLambda);			
+			elements[iSat].p = elementSeries[iSat][3].calculateAllTermsInSine(t, deltaLambda);			
 		}
 	}
 	
@@ -124,8 +124,8 @@ public class TASSTheory {
 			fle = fle + corf;
 		} while (abs(corf) > EPSILON);
 		
-		debug("rl", rl);
-		debug("fle", fle);
+		debug("rl", rl*180.0/PI);
+		debug("fle", fle*180.0/PI);
 	
 		cf = cos(fle);
 		sf = sin(fle);
