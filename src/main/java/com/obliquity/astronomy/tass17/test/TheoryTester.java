@@ -50,8 +50,6 @@ public class TheoryTester {
     		
     		double jd = Double.parseDouble(line);
     		
-    		System.out.printf(" %13.5f  ", jd);
-    		
     		theory.calculateElements(jd, elements);
   		
     		for (int iSat = 0; iSat < 8; iSat++) {   			
