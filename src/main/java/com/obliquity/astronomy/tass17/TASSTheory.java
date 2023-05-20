@@ -19,9 +19,11 @@ package com.obliquity.astronomy.tass17;
 */
 
 import java.io.IOException;
+import static java.lang.Math.*;
 
 public class TASSTheory {
 	private static final double TWO_PI = 2.0 * Math.PI;
+	private static final double ONE_THIRD = 1.0/3.0;
 
 	private TASSElementSeries[][] elementSeries = new TASSElementSeries[8][4];
 
@@ -91,5 +93,66 @@ public class TASSTheory {
 			
 			elements[iSat].q = elementSeries[iSat][3].calculateAllTermsInSine(t, deltaLambda);			
 		}
+	}
+	
+	/*
+	 * This method is a direct transcription of the FORTRAN subroutine EDERED. 
+	 */
+	
+	private static final double EPSILON = 1.0e-10;
+	
+	public void calculatePosition(int iSat, TASSElements elements, double[] position) {
+		if (position == null || position.length != 3)
+			position = new double[3];
+		
+		double am0 = TASSConstants.MEAN_MOTIONS[iSat]*(1.0 + elements.meanMotion);
+		double rmu = TASSConstants.GK1 * (1.0 + TASSConstants.MASSES[iSat]);
+		double dga = pow(rmu/(am0 * am0), ONE_THIRD);
+		
+		double rl = elements.lambda;
+		double rk = elements.k;
+		double rh = elements.h;
+		
+		double fle = rl - rk * sin(rl) + rh * cos(rl);
+		
+		double corf = 1.0, cf, sf;
+		
+		do {
+			cf = cos(fle);
+			sf = sin(fle);
+			corf = (rl - fle + rk * sf - rh * cf)/(1.0 - rk * cf - rh * sf);
+			fle = fle + corf;
+		} while (abs(corf) > EPSILON);
+		
+		cf = cos(fle);
+		sf = sin(fle);
+		
+		double dlf = -rk * sf + rh * cf;
+		double phi = sqrt(1.0 - rk * rk - rh * rh);
+		double psi = 1.0/(1.0 + phi);
+		
+		double x1 = dga * (cf - rk - psi * rh * dlf);
+		double y1 = dga * (sf - rh + psi * rk * dlf);
+		
+		double p = elements.p;
+		double q = elements.q;
+		
+		double dwho = 2.0 * sqrt(1.0 - p * p - q * q);
+		double rtp = 1.0 - 2.0 * p * p;
+		double rtq = 1.0 - 2.0 * q * q;
+		double rdg = 2.0 * p * q;
+		
+		double x2 = x1 * rtp + y1 * rdg;
+		double y2 = x1 * rdg + y1 * rtq;
+		double z2 = (-x1 * p + y1 * q) * dwho;
+		
+		double CO = TASSConstants.CO;
+		double SO = TASSConstants.SO;
+		double CI = TASSConstants.CI;
+		double SI = TASSConstants.SI;
+		
+		position[0] = CO * x2 - SO * CI * y2 + SO * SI * z2;
+		position[1] = SO * x2 + CO * CI * y2 - CO * SI * z2;
+		position[2] =                SI * y2 + CI * z2;
 	}
 }
