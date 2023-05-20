@@ -64,6 +64,8 @@ public class TheoryTester {
     					elements[iSat].q);
     			
     			theory.calculatePosition(iSat, elements[iSat], position);
+    			
+    			System.out.printf(" %13.5f %d %13.8f %13.8f %13.8f\n",jd,  iSat+1, position[0], position[1], position[2]);
     		}
     	}
     }
