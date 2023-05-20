@@ -109,8 +109,6 @@ public class TASSTheory {
 		double rmu = TASSConstants.GK1 * (1.0 + TASSConstants.MASSES[iSat]);
 		double dga = pow(rmu/(am0 * am0), ONE_THIRD);
 		
-		debug("dga", dga);
-		
 		double rl = elements.lambda;
 		double rk = elements.k;
 		double rh = elements.h;
@@ -125,9 +123,6 @@ public class TASSTheory {
 			corf = (rl - fle + rk * sf - rh * cf)/(1.0 - rk * cf - rh * sf);
 			fle = fle + corf;
 		} while (abs(corf) > EPSILON);
-		
-		debug("rl", rl*180.0/PI);
-		debug("fle", fle*180.0/PI);
 	
 		cf = cos(fle);
 		sf = sin(fle);
@@ -136,18 +131,8 @@ public class TASSTheory {
 		double phi = sqrt(1.0 - rk * rk - rh * rh);
 		double psi = 1.0/(1.0 + phi);
 		
-		debug("dlf", dlf);
-		debug("phi", phi);
-		debug("psi", psi);
-		
 		double x1 = cf - rk - psi * rh * dlf;
 		double y1 = sf - rh + psi * rk * dlf;
-		
-		debug("x1", x1);
-		debug("y1", y1);
-		
-		double r1 = sqrt(x1*x1+y1*y1);
-		debug("r1", r1);
 		
 		double p = elements.p;
 		double q = elements.q;
@@ -160,10 +145,7 @@ public class TASSTheory {
 		double x2 = x1 * rtp + y1 * rdg;
 		double y2 = x1 * rdg + y1 * rtq;
 		double z2 = (-x1 * p + y1 * q) * dwho;
-		
-		debug("x2,y2,z2", x2, y2, z2);
-		double r2 = sqrt(x2*x2+y2*y2+z2*z2);
-		debug("r2", r2);
+
 		
 		double CO = TASSConstants.CO;
 		double SO = TASSConstants.SO;
@@ -173,30 +155,9 @@ public class TASSTheory {
 		double x3 = CO * x2 - SO * CI * y2 + SO * SI * z2;
 		double y3 = SO * x2 + CO * CI * y2 - CO * SI * z2;
 		double z3 =                SI * y2 + CI * z2;
-		
-		debug("x3,y3,z3", x3, y3, z3);
-		double r3 = sqrt(x3*x3+y3*y3+z3*z3);
-		debug("r3", r3);
-		
+	
 		position[0] = x3 * dga;
 		position[1] = y3 * dga;
 		position[2] = z3 * dga;
-	}
-	
-	private static final boolean DEBUG = Boolean.getBoolean("debug");
-	
-	private void debug(String name, double value) {
-		if (DEBUG)
-			System.err.printf("%-10s = %15.8f\n", name, value);
-	}
-	
-	//private void debug(String name, double value1, double value2) {
-	//	if (DEBUG)
-	//		System.err.printf("%-10s = %15.8f %15.8f\n", name, value1, value2);
-	//}
-	
-	private void debug(String name, double value1, double value2, double value3) {
-		if (DEBUG)
-			System.err.printf("%-10s = %15.8f %15.8f %15.8f\n", name, value1, value2, value3);
 	}
 }
