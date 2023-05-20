@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import com.obliquity.astronomy.almanac.ApparentPlace;
+import com.obliquity.astronomy.almanac.AstronomicalDate;
 import com.obliquity.astronomy.almanac.EarthCentre;
 import com.obliquity.astronomy.almanac.IAUEarthRotationModel;
 import com.obliquity.astronomy.almanac.JPLEphemeris;
@@ -102,9 +103,38 @@ public class SaturnObserver {
     		if (line == null)
     			System.exit(0);
     		
-    		double jd = Double.parseDouble(line);
+    		String[] words = line.trim().split("\s+");
     		
-    		calculateSatelliteOffsets(jd);
+    		double jd;
+    		int year = 0, month = 0, day = 0, hour = 0, minute = 0;
+    		
+    		switch (words.length){
+    		case 1:
+    			jd = Double.parseDouble(line);
+    			break;
+    			
+    		case 5:
+    			hour = Integer.parseInt(words[3]);
+    			minute = Integer.parseInt(words[4]);
+    			// Fall through ...
+    			
+    		case 3:
+    			year = Integer.parseInt(words[0]);
+    			month = Integer.parseInt(words[1]);
+    			day = Integer.parseInt(words[2]);
+    			
+    			AstronomicalDate ad = new AstronomicalDate(year, month, day, hour, minute, 0.0);
+    			
+    			jd = ad.getJulianDate();
+    			break;
+    			
+    		default:
+    			System.err.println("Invalid input");
+    			jd = Double.NaN;
+    		}
+    		
+    		if (!Double.isNaN(jd))
+    			calculateSatelliteOffsets(jd);
     	}
 	}
 	
@@ -144,7 +174,7 @@ public class SaturnObserver {
    			double dy = (wx * xa + wy * ya + wz * za) * q;
    			double dz = (ux * xa + uy * ya + uz * za) * q;
    			
-   			System.out.printf(" %13.5f %1d  %8.3f  %8.3f  %8.3f ]\n", jd, iSat, dx, dy, dz);
+   			System.out.printf(" %13.5f %1d  %8.3f  %8.3f  %8.3f\n", jd, iSat, dx, dy, dz);
    		}
 	}
 }
