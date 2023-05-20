@@ -67,8 +67,16 @@ public class TASSTheory {
 			
 			elements[iSat].meanMotion = elementSeries[iSat][0].getConstantTerm() + elementSeries[iSat][0].calculateAllTermsInCosine(t, deltaLambda);
 			
-			elements[iSat].lambda = (elementSeries[iSat][1].calculateLinearTerm(t) + deltaLambda[iSat] +
+			double lambda = (elementSeries[iSat][1].calculateLinearTerm(t) + deltaLambda[iSat] +
 					elementSeries[iSat][1].calculateShortPeriodTermsInSine(t, deltaLambda)) % TWO_PI;
+			
+			if (lambda > Math.PI)
+				lambda -= TWO_PI;
+			
+			if (lambda < -Math.PI)
+				lambda += TWO_PI;
+
+			elements[iSat].lambda = lambda;
 			
 			elements[iSat].h = elementSeries[iSat][2].calculateAllTermsInCosine(t, deltaLambda);
 			
