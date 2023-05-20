@@ -105,7 +105,7 @@ public class TASSTheory {
 		if (position == null || position.length != 3)
 			position = new double[3];
 		
-		double am0 = TASSConstants.MEAN_MOTIONS[iSat]*(1.0 + elements.meanMotionAdjustment);
+		double am0 = 365.25 * TASSConstants.MEAN_MOTIONS[iSat] * (1.0 + elements.meanMotionAdjustment);
 		double rmu = TASSConstants.GK1 * (1.0 + TASSConstants.MASSES[iSat]);
 		double dga = pow(rmu/(am0 * am0), ONE_THIRD);
 		
