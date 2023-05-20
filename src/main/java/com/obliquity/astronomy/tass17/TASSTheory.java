@@ -167,6 +167,8 @@ public class TASSTheory {
 		position[0] = CO * x2 - SO * CI * y2 + SO * SI * z2;
 		position[1] = SO * x2 + CO * CI * y2 - CO * SI * z2;
 		position[2] =                SI * y2 + CI * z2;
+		
+		debug("position", position);
 	}
 	
 	private static final boolean DEBUG = Boolean.getBoolean("debug");
