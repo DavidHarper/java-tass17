@@ -46,7 +46,7 @@ public class TASSDataFileReader {
 		for (int i = 0; i < words.length; i++)
 			headerData[i] = Integer.parseInt(words[i]);
 		
-		return (headerData[0] == TASSConstants.HYPERION) ? readHyperionTerms(br, headerData) : readTerms(br, headerData);
+		return (headerData[0] == 7) ? readHyperionTerms(br, headerData) : readTerms(br, headerData);
 	}
 
 	private TASSElementSeries readTerms(BufferedReader br, int[] headerData) throws IOException {
