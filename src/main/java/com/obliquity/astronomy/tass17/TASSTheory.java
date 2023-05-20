@@ -45,6 +45,11 @@ public class TASSTheory {
 		if (elements == null || elements.length < 8)
 			throw new IllegalArgumentException("Elements array is null or too small");
 		
+		for (int iSat = 0; iSat < 8; iSat++) {
+			if (elements[iSat] == null)
+				elements[iSat] = new TASSElements();
+		}
+		
     	double[] deltaLambda = new double[8];
 
 		for (int iSat = 0; iSat < 8; iSat++) {
