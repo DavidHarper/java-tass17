@@ -39,6 +39,8 @@ public class SaturnObserver {
 	private IAUEarthRotationModel erm = null;
 	private TASSTheory theory;
 	private final double cosObliquity, sinObliquity;
+	
+	private boolean timeIsUT = Boolean.getBoolean("saturnobserver.timeisut");
 
 	public static void main(String[] args) {
 		String ephemerisHomeName = System.getProperty("saturnobserver.ephemerishome");
@@ -139,6 +141,9 @@ public class SaturnObserver {
 	}
 	
 	private void calculateSatelliteOffsets(double jd) throws JPLEphemerisException {
+		if (timeIsUT)
+			jd += erm.deltaT(jd);
+		
 		apSaturn.calculateApparentPlace(jd);
 		
 		double raSaturn = apSaturn.getRightAscensionOfDate();
