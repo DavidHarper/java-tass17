@@ -124,6 +124,9 @@ public class TASSTheory {
 			fle = fle + corf;
 		} while (abs(corf) > EPSILON);
 		
+		debug("rl", rl);
+		debug("fle", fle);
+	
 		cf = cos(fle);
 		sf = sin(fle);
 		
@@ -131,8 +134,18 @@ public class TASSTheory {
 		double phi = sqrt(1.0 - rk * rk - rh * rh);
 		double psi = 1.0/(1.0 + phi);
 		
-		double x1 = dga * (cf - rk - psi * rh * dlf);
-		double y1 = dga * (sf - rh + psi * rk * dlf);
+		debug("dlf", dlf);
+		debug("phi", phi);
+		debug("psi", psi);
+		
+		double x1 = cf - rk - psi * rh * dlf;
+		double y1 = sf - rh + psi * rk * dlf;
+		
+		debug("x1", x1);
+		debug("y1", y1);
+		
+		x1 *= dga;
+		y1 *= dga;
 		
 		double p = elements.p;
 		double q = elements.q;
@@ -154,5 +167,17 @@ public class TASSTheory {
 		position[0] = CO * x2 - SO * CI * y2 + SO * SI * z2;
 		position[1] = SO * x2 + CO * CI * y2 - CO * SI * z2;
 		position[2] =                SI * y2 + CI * z2;
+	}
+	
+	private static final boolean DEBUG = Boolean.getBoolean("debug");
+	
+	private void debug(String name, double value) {
+		if (DEBUG)
+			System.err.printf("%-10s = %15.8f\n", name, value);
+	}
+	
+	private void debug(String name, double[] value) {
+		if (DEBUG)
+			System.err.printf("%-10s = %15.8f %15.8f %15.8f\n", name, value[0], value[1], value[2]);
 	}
 }
