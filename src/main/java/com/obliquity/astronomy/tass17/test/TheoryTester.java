@@ -1,12 +1,5 @@
 package com.obliquity.astronomy.tass17.test;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-
-import com.obliquity.astronomy.tass17.TASSElements;
-import com.obliquity.astronomy.tass17.TASSTheory;
-
 /*
  *  java-tass17: a Java implementation of the TASS 1.7 model of the orbits of the major satellites of Saturn
  *  Copyright (C) 2023 David Harper at obliquity.com
@@ -24,6 +17,13 @@ import com.obliquity.astronomy.tass17.TASSTheory;
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+import com.obliquity.astronomy.tass17.TASSElements;
+import com.obliquity.astronomy.tass17.TASSTheory;
 
 public class TheoryTester {
     public static void main(String[] args) {
