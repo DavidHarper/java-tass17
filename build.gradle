@@ -13,6 +13,13 @@ jar {
     }
 }
 
+repositories {
+	maven {
+       	name 'obliquity.com repository'
+       	url 'https://software.obliquity.com/repository'
+ 	}    
+}
+
 publishing {
     publications {
         myLibrary(MavenPublication) {
@@ -26,4 +33,8 @@ publishing {
             url = "file://${buildDir}/repo"
         }
     }
+    
+    dependencies {
+	    implementation 'com.obliquity.astronomy:astrojava:2.0'
+	}
 }
