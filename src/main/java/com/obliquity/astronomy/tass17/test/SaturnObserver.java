@@ -41,6 +41,7 @@ public class SaturnObserver {
 	private final double cosObliquity, sinObliquity;
 	
 	private boolean timeIsUT = Boolean.getBoolean("saturnobserver.timeisut");
+	private boolean usePositionOfDate = Boolean.getBoolean("saturnobserver.usepositionofdate");
 
 	public static void main(String[] args) {
 		String ephemerisHomeName = System.getProperty("saturnobserver.ephemerishome");
@@ -146,11 +147,11 @@ public class SaturnObserver {
 		
 		apSaturn.calculateApparentPlace(jd);
 		
-		double raSaturn = apSaturn.getRightAscensionOfDate();
+		double raSaturn = usePositionOfDate ? apSaturn.getRightAscensionOfDate() : apSaturn.getRightAscensionJ2000();
 		double ca = Math.cos(raSaturn);
 		double sa = Math.sin(raSaturn);
 		
-		double decSaturn = apSaturn.getDeclinationOfDate();
+		double decSaturn = usePositionOfDate ? apSaturn.getDeclinationOfDate() : apSaturn.getDeclinationJ2000();
 		double cd = Math.cos(decSaturn);
 		double sd = Math.sin(decSaturn);
 		
