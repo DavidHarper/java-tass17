@@ -58,10 +58,10 @@ public class TheoryTester {
     			System.out.printf(" %13.5f %d %13.8f %13.8f %13.8f %13.8f %13.8f %13.8f\n", jd, iSat+1,
     					elements[iSat].meanMotionAdjustment,
     					elements[iSat].lambda,
-    					elements[iSat].h,
     					elements[iSat].k,
-    					elements[iSat].p,
-    					elements[iSat].q);
+    					elements[iSat].h,
+    					elements[iSat].q,
+    					elements[iSat].p);
     			
     			theory.calculatePosition(iSat, elements[iSat], position);
     			
