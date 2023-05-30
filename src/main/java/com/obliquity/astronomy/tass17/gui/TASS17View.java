@@ -51,16 +51,20 @@ public class TASS17View extends JPanel {
 	
 	private final double FLATTENING = 0.90;
 	
-	public TASS17View(double xc, double yc, double radius, double earthLatitude, double positionAngle) {
+	private TASS17Model model;
+	
+	public TASS17View() {
 		super();
-		
 		setBackground(Color.BLACK);
-		
-		this.xc = xc;
-		this.yc = yc;
-		this.radius = radius;
-		this.sinEarthLatitude = Math.sin(earthLatitude);
-		this.positionAngle = positionAngle;
+	}
+	
+	public TASS17View(TASS17Model model) {
+		this();
+		setModel(model);
+	}
+	
+	public void setModel(TASS17Model model) {
+		this.model = model;
 	}
 	
 	public Dimension getPreferredSize() {
@@ -70,7 +74,6 @@ public class TASS17View extends JPanel {
 	public void setCentre(double xc, double yc) {
 		this.xc = xc;
 		this.yc = yc;
-		repaint();
 	}
 	
 	public void setAutoCentre(boolean autoCentre) {
@@ -79,17 +82,14 @@ public class TASS17View extends JPanel {
 	
 	public void setRadius(double radius) {
 		this.radius = radius;
-		repaint();
 	}
 	
 	public void setEarthLatitude(double earthLatitude) {
 		this.sinEarthLatitude = Math.sin(earthLatitude);
-		repaint();
 	}
 	
 	public void setPositionAngle(double positionAngle) {
 		this.positionAngle = positionAngle;
-		repaint();
 	}
 	
 	public void paintComponent(Graphics gOriginal) {
