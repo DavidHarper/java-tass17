@@ -1,9 +1,5 @@
 package com.obliquity.astronomy.tass17.gui;
 
-import java.io.IOException;
-
-import com.obliquity.astronomy.almanac.AlmanacData;
-
 /*
  *  java-tass17: a Java implementation of the TASS 1.7 model of the orbits of the major satellites of Saturn
  *  Copyright (C) 2023 David Harper at obliquity.com
@@ -22,6 +18,8 @@ import com.obliquity.astronomy.almanac.AlmanacData;
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import java.io.IOException;
+
 import com.obliquity.astronomy.almanac.ApparentPlace;
 import com.obliquity.astronomy.almanac.EarthCentre;
 import com.obliquity.astronomy.almanac.IAUEarthRotationModel;
@@ -30,6 +28,7 @@ import com.obliquity.astronomy.almanac.JPLEphemerisException;
 import com.obliquity.astronomy.almanac.MovingPoint;
 import com.obliquity.astronomy.almanac.PlanetCentre;
 import com.obliquity.astronomy.almanac.SaturnRingAngles;
+import com.obliquity.astronomy.almanac.AlmanacData;
 import com.obliquity.astronomy.tass17.TASSElements;
 import com.obliquity.astronomy.tass17.TASSTheory;
 
