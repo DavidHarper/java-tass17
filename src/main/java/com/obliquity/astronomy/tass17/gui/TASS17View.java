@@ -118,6 +118,62 @@ public class TASS17View extends JPanel {
 			yc = (double)r.y + 0.5 * (double)r.height;
 		}
 		
+		g.setColor(Color.LIGHT_GRAY);
+		
+		double x = 0.0;
+		double dx = 10.0;
+		
+		while (true) {
+			double xl = xc + x * scale;
+			
+			if ((int)xl > r.x+r.width)
+				break;
+			
+			g.drawLine((int)xl, r.y, (int)xl, r.y+r.height);
+			
+			x += dx;
+		}
+		
+		x = -dx;
+		
+		while (true) {
+			double xl = xc + x * scale;
+			
+			if ((int)xl < r.x)
+				break;
+			
+			g.drawLine((int)xl, r.y, (int)xl, r.y+r.height);
+			
+			x -= dx;
+		}
+		
+		double y = 0.0;
+		double dy = 10.0;
+		
+		while (true) {
+			double yl = yc + y * scale;
+			
+			if ((int)yl > r.y+r.height)
+				break;
+			
+			g.drawLine(r.x, (int)yl, r.x+r.width, (int)yl);
+			
+			y += dy;
+		}
+		
+		y = -dy;
+		
+		while (true) {
+			double yl = yc + y * scale;
+			
+			if ((int)yl < r.y)
+				break;
+			
+			g.drawLine(r.x, (int)yl, r.x+r.width, (int)yl);
+			
+			y -= dy;
+		}
+
 		g.setColor(SATURN_COLOUR);
 		
 		AffineTransform xform = new AffineTransform();
@@ -166,8 +222,8 @@ public class TASS17View extends JPanel {
 		for (int iSat = 0; iSat < 8; iSat++) {
 			model.getSatelliteOffsets(iSat, offsets);
 			
-			double dx = scale * offsets[0];
-			double dy = scale * offsets[1];
+			dx = scale * offsets[0];
+			dy = scale * offsets[1];
 			
 			double xSat = xc - dx;
 			double ySat = yc - dy;
