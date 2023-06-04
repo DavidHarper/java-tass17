@@ -19,6 +19,7 @@ package com.obliquity.astronomy.tass17.gui;
 */
 
 import java.io.IOException;
+import java.io.PrintStream;
 
 import com.obliquity.astronomy.almanac.ApparentPlace;
 import com.obliquity.astronomy.almanac.EarthCentre;
@@ -147,4 +148,15 @@ public class TASS17Model {
    		validData = true;
 	}
 
+	private static final String SEPARATOR = "================================================================================";
+	
+	public void show(PrintStream ps) {
+		ps.println(SEPARATOR);
+		ps.printf("JD = %13.5f\n", jd);
+		ps.printf("Saturn\n    SD = %6.2f\n     B = %6.2f\n     P = %6.2f\n", getSaturnSemiDiameter(),
+				saturnData.saturnRingAnglesForEarth.B, saturnData.saturnRingAnglesForEarth.P);
+		ps.println("Moons");
+		for (int iSat = 0; iSat < 8; iSat++)
+			ps.printf("    %1d    %8.3f  %8.3f  %8.3f\n", iSat, satelliteOffsets[iSat][0], satelliteOffsets[iSat][1], satelliteOffsets[iSat][2]);
+	}
 }

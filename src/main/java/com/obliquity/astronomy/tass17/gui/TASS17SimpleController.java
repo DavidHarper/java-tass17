@@ -189,6 +189,10 @@ public class TASS17SimpleController {
 				}
     			break;
     			
+    		case "show":
+    			model.show(System.out);
+    			break;
+    			
     		case "quit":
     		case "exit":
     			System.exit(0);
