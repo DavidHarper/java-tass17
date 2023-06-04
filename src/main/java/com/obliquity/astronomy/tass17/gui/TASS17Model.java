@@ -103,11 +103,13 @@ public class TASS17Model {
 	private void calculateData() throws JPLEphemerisException {
 		saturnData = AlmanacData.calculateAlmanacData(apSaturn, apSun, jd, AlmanacData.J2000, saturnData);
 		
-		double raSaturn = saturnData.rightAscension;
+		apSaturn.calculateApparentPlace(jd);
+
+		double raSaturn = apSaturn.getRightAscensionJ2000();
 		double ca = Math.cos(raSaturn);
 		double sa = Math.sin(raSaturn);
 		
-		double decSaturn = saturnData.declination;
+		double decSaturn = apSaturn.getDeclinationJ2000();
 		double cd = Math.cos(decSaturn);
 		double sd = Math.sin(decSaturn);
 		

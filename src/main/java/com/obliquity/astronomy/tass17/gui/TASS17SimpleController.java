@@ -87,7 +87,6 @@ public class TASS17SimpleController {
 	
 	private static void createAndShowGUI(TASS17Model model, TASS17View view) throws IOException, JPLEphemerisException {	
 		view.setModel(model);
-		view.setAutoCentre(true);
 		
 		JFrame frame = new JFrame(view.getClass().getName());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

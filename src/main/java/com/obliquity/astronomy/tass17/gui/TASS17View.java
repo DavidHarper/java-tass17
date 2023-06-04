@@ -20,6 +20,7 @@ package com.obliquity.astronomy.tass17.gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -41,7 +42,7 @@ public class TASS17View extends JPanel {
 	private double xc = 0.0, yc = 0.0;
 	private double scale = 10.0;
 	
-	private boolean autoCentre = false;
+	private boolean autoCentre = true;
 	
 	private Color SATURN_COLOUR = new Color(0xFF, 0xEE, 0xBB);
 	private Color A_RING_COLOUR = new Color(0xFF, 0xFF, 0xF0);
@@ -50,6 +51,10 @@ public class TASS17View extends JPanel {
 	
 	private Color SATELLITE_COLOUR = Color.RED;
 	
+	private final String[] SATELLITE_LABELS = {
+			"Mi", "En", "Te", "Di", "Rh", "Ti", "Hy", "Ia"
+	};
+
 	private final double FLATTENING = 0.90;
 	
 	private TASS17Model model;
@@ -116,7 +121,7 @@ public class TASS17View extends JPanel {
 		g.setColor(SATURN_COLOUR);
 		
 		AffineTransform xform = new AffineTransform();
-		xform.rotate(getPositionAngle(), xc, yc);
+		xform.rotate(-getPositionAngle(), xc, yc);
 		
 		Path2D.Double saturnGlobe = new Path2D.Double(Path2D.WIND_EVEN_ODD);
 		
@@ -156,6 +161,7 @@ public class TASS17View extends JPanel {
 		double[] offsets = new double[3];
 		
 		g.setColor(SATELLITE_COLOUR);
+		g.setFont(new Font("SansSerif", Font.BOLD, 10));
 		
 		for (int iSat = 0; iSat < 8; iSat++) {
 			model.getSatelliteOffsets(iSat, offsets);
@@ -163,11 +169,14 @@ public class TASS17View extends JPanel {
 			double dx = scale * offsets[0];
 			double dy = scale * offsets[1];
 			
-			System.out.printf("%1d  %8.3f  %8.3f ==> %8.3f  %8.3f\n", iSat, offsets[0], offsets[1], dx, dy);
+			double xSat = xc - dx;
+			double ySat = yc - dy;
 			
-			Shape moon = new Ellipse2D.Double(xc + dx - 2.0, yc + dy - 2.0, 4.0, 4.0);
+			Shape moon = new Ellipse2D.Double(xSat - 2.0, ySat - 2.0, 4.0, 4.0);
 			
 			g.fill(moon);
+
+			g.drawString(SATELLITE_LABELS[iSat], (float)xSat + 3.0f, (float)ySat + 3.0f);
 		}
 	}
 	
