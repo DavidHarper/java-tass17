@@ -64,7 +64,7 @@ public class TASS17SimpleController {
 		String ephemerisHomeName = System.getProperty("tass17simplecontroller.ephemerishome");
 		
 		if (ephemerisHomeName == null) {
-			System.err.println("Set property saturnobserver.ephemerishome and re-run");
+			System.err.println("Set property tass17simplecontroller.ephemerishome and re-run");
 			System.exit(1);
 		}
 		
