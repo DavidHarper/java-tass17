@@ -142,10 +142,15 @@ public class TASS17SimpleController {
 		for (int i = 0; i < nSteps; i++) {
 			model.incrementTime(stepSize);
 			view.repaint();
-			if (i < nSteps - 1) {
+			
+			if ((i % 10) == 0)
+				System.out.print(" " + i);
+			
+			if (i < nSteps - 1)
 				Thread.sleep(sleep);
-			}
 		}
+		
+		System.out.println();
 	}
 
 	public void run() throws IOException, JPLEphemerisException {
