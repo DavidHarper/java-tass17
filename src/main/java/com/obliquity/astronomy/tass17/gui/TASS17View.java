@@ -49,6 +49,8 @@ public class TASS17View extends JPanel {
 	private Color B_RING_COLOUR = new Color(0xFF, 0xFF, 0xF0);
 	private Color C_RING_COLOUR = new Color(0x66, 0x66, 0x57, 0x7f);
 	
+	private Color GRID_COLOUR = new Color(0x40, 0x40, 0x40);
+	
 	private Color SATELLITE_COLOUR = Color.RED;
 	
 	private final String[] SATELLITE_LABELS = {
@@ -118,7 +120,7 @@ public class TASS17View extends JPanel {
 			yc = (double)r.y + 0.5 * (double)r.height;
 		}
 		
-		g.setColor(Color.LIGHT_GRAY);
+		g.setColor(GRID_COLOUR);
 		
 		double x = 0.0;
 		double dx = 10.0;
