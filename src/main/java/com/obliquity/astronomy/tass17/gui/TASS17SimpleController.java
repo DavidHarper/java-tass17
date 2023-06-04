@@ -153,6 +153,7 @@ public class TASS17SimpleController {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	
     	while (true) {
+    		System.out.print("TASS17 > ");
     		String line = br.readLine();
     		double jd = 0.0;
     		
