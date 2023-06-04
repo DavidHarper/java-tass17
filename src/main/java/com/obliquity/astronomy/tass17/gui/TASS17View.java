@@ -29,6 +29,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.geom.Ellipse2D;
 
 import javax.swing.JPanel;
 
@@ -38,7 +39,7 @@ public class TASS17View extends JPanel {
 	private final int preferredHeight = 800;
 
 	private double xc = 0.0, yc = 0.0;
-	private double radius = 100.0;
+	private double scale = 10.0;
 	
 	private boolean autoCentre = false;
 	
@@ -46,6 +47,8 @@ public class TASS17View extends JPanel {
 	private Color A_RING_COLOUR = new Color(0xFF, 0xFF, 0xF0);
 	private Color B_RING_COLOUR = new Color(0xFF, 0xFF, 0xF0);
 	private Color C_RING_COLOUR = new Color(0x66, 0x66, 0x57, 0x7f);
+	
+	private Color SATELLITE_COLOUR = Color.RED;
 	
 	private final double FLATTENING = 0.90;
 	
@@ -78,8 +81,8 @@ public class TASS17View extends JPanel {
 		this.autoCentre = autoCentre;
 	}
 	
-	public void setRadius(double radius) {
-		this.radius = radius;
+	public double getSaturnRadius() {
+		return scale * model.getSaturnSemiDiameter();
 	}
 	
 	public double getEarthLatitude() {
@@ -117,25 +120,27 @@ public class TASS17View extends JPanel {
 		
 		Path2D.Double saturnGlobe = new Path2D.Double(Path2D.WIND_EVEN_ODD);
 		
-		saturnGlobe.append(new Arc2D.Double(xc-radius, yc-radius*FLATTENING, 2.0*radius, 2.0*radius*FLATTENING, 0.0, 360.0, Arc2D.PIE), false);
+		double saturnRadius = getSaturnRadius();
+		
+		saturnGlobe.append(new Arc2D.Double(xc-saturnRadius, yc-saturnRadius*FLATTENING, 2.0*saturnRadius, 2.0*saturnRadius*FLATTENING, 0.0, 360.0, Arc2D.PIE), false);
 		
 		g.fill(xform.createTransformedShape(saturnGlobe));
 		
 		Path2D.Double path = new Path2D.Double(Path2D.WIND_EVEN_ODD);
 		
-		double boxSize = radius * 2.50;
+		double boxSize = saturnRadius * 2.50;
 		
 		path.append(new Rectangle2D.Double(xc-boxSize, yc-boxSize, 2.0*boxSize, 2.0*boxSize), false);
 		
-		path.append(new Arc2D.Double(xc-radius, yc-radius*FLATTENING, 2.0*radius, 2.0*radius*FLATTENING, 0.0f, getSineEarthLatitude() > 0.0 ? 180.0 : -180.0, Arc2D.PIE), false);
+		path.append(new Arc2D.Double(xc-saturnRadius, yc-saturnRadius*FLATTENING, 2.0*saturnRadius, 2.0*saturnRadius*FLATTENING, 0.0f, getSineEarthLatitude() > 0.0 ? 180.0 : -180.0, Arc2D.PIE), false);
 		
 		Shape savedClip = g.getClip();
 		
 		g.setClip(xform.createTransformedShape(path));
 		
-		Path2D.Double ringA = getRingPath(2.03, 2.27);
-		Path2D.Double ringB = getRingPath(1.53, 1.95);
-		Path2D.Double ringC = getRingPath(1.24, 1.53);
+		Path2D.Double ringA = getRingPath(saturnRadius, 2.03, 2.27);
+		Path2D.Double ringB = getRingPath(saturnRadius, 1.53, 1.95);
+		Path2D.Double ringC = getRingPath(saturnRadius, 1.24, 1.53);
 		
 		g.setColor(C_RING_COLOUR);
 		g.fill(xform.createTransformedShape(ringC));
@@ -147,15 +152,32 @@ public class TASS17View extends JPanel {
 		g.fill(xform.createTransformedShape(ringA));
 		
 		g.setClip(savedClip);
+		
+		double[] offsets = new double[3];
+		
+		g.setColor(SATELLITE_COLOUR);
+		
+		for (int iSat = 0; iSat < 8; iSat++) {
+			model.getSatelliteOffsets(iSat, offsets);
+			
+			double dx = scale * offsets[0];
+			double dy = scale * offsets[1];
+			
+			System.out.printf("%1d  %8.3f  %8.3f ==> %8.3f  %8.3f\n", iSat, offsets[0], offsets[1], dx, dy);
+			
+			Shape moon = new Ellipse2D.Double(xc + dx - 2.0, yc + dy - 2.0, 4.0, 4.0);
+			
+			g.fill(moon);
+		}
 	}
 	
-	private Path2D.Double getRingPath(double innerRadius, double outerRadius) {
+	private Path2D.Double getRingPath(double saturnRadius, double innerRadius, double outerRadius) {
 		double sinEarthLatitude = getSineEarthLatitude();
 		
-		double innerWidth = radius * innerRadius;
+		double innerWidth = saturnRadius * innerRadius;
 		double innerHeight = innerWidth * Math.abs(sinEarthLatitude);
 		
-		double outerWidth = radius * outerRadius;
+		double outerWidth = saturnRadius * outerRadius;
 		double outerHeight = outerWidth * Math.abs(sinEarthLatitude);
 		
 		Path2D.Double ring = new Path2D.Double(Path2D.WIND_EVEN_ODD);

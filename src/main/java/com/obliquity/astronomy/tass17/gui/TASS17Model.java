@@ -63,12 +63,6 @@ public class TASS17Model {
 		this.apSun = new ApparentPlace(earth, sun, sun, erm);
 	}
 	
-	public void setTimeToNow() throws JPLEphemerisException {
-		long millis = System.currentTimeMillis();
-		double jdNow = 2440587.5 + ((double)millis)/86400000.0;
-		setTime(jdNow);
-	}
-	
 	public void setTime(double jd) throws JPLEphemerisException {
 		this.jd = jd;
 		calculateData();

@@ -19,6 +19,7 @@ package com.obliquity.astronomy.tass17.gui;
 */
 
 import com.obliquity.astronomy.almanac.JPLEphemerisException;
+import com.obliquity.astronomy.almanac.AstronomicalDate;
 import com.obliquity.astronomy.almanac.JPLEphemeris;
 
 import javax.swing.JComponent;
@@ -38,7 +39,6 @@ public class TASS17SimpleController {
 			final TASS17View view = new TASS17View();
 			JPLEphemeris ephemeris = getEphemeris();
 			final TASS17Model model =  new TASS17Model(ephemeris);
-			model.setTimeToNow();
 			
 			javax.swing.SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
@@ -51,6 +51,8 @@ public class TASS17SimpleController {
 			});
 			
 			TASS17SimpleController controller = new TASS17SimpleController(model, view);
+			
+			controller.setTimeToNow();
 			
 			controller.run();
 		} catch (IOException | JPLEphemerisException e) {
@@ -111,21 +113,55 @@ public class TASS17SimpleController {
 	}
 	
 	public void setTime(double jd) throws JPLEphemerisException {
+		System.err.printf("setTime(%13.5f)\n", jd);
 		model.setTime(jd);
 		view.repaint();
 	}
 	
+	public void setTimeToNow() throws JPLEphemerisException {
+		long millis = System.currentTimeMillis();
+		double jdNow = 2440587.5 + ((double)millis)/86400000.0;
+		setTime(jdNow);
+	}
+
 	public void run() throws IOException, JPLEphemerisException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		
+	
     	while (true) {
     		String line = br.readLine();
+    		double jd = 0.0;
     		
     		if (line == null || line.trim().length() == 0)
     			System.exit(0);
+    		String[] words = line.trim().split("\s+");
     		
-    		double jd = Double.parseDouble(line);
+    		int year = 0, month = 0, day = 0, hour = 0, minute = 0;
     		
+    		switch (words.length){
+    		case 1:
+    			jd = Double.parseDouble(line);
+    			break;
+    			
+    		case 5:
+    			hour = Integer.parseInt(words[3]);
+    			minute = Integer.parseInt(words[4]);
+    			// Fall through ...
+    			
+    		case 3:
+    			year = Integer.parseInt(words[0]);
+    			month = Integer.parseInt(words[1]);
+    			day = Integer.parseInt(words[2]);
+    			
+    			AstronomicalDate ad = new AstronomicalDate(year, month, day, hour, minute, 0.0);
+    			
+    			jd = ad.getJulianDate();
+    			break;
+    			
+    		default:
+    			System.err.println("Invalid input");
+    			System.exit(1);
+    		}
+    		    		
     		setTime(jd);
     	}
 	}
