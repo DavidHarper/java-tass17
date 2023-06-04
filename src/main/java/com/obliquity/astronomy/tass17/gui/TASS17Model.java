@@ -68,6 +68,11 @@ public class TASS17Model {
 		calculateData();
 	}
 	
+	public void incrementTime(double djd) throws JPLEphemerisException {
+		this.jd += djd;
+		calculateData();
+	}
+	
 	public boolean haveValidData() {
 		return validData;
 	}

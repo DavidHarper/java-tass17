@@ -138,6 +138,16 @@ public class TASS17SimpleController {
 		view.setAutoCentre(true);
 		view.repaint();
 	}
+	
+	public void animate(int nSteps, double stepSize, long sleep) throws JPLEphemerisException, InterruptedException {
+		for (int i = 0; i < nSteps; i++) {
+			model.incrementTime(stepSize);
+			view.repaint();
+			if (i < nSteps - 1) {
+				Thread.sleep(sleep);
+			}
+		}
+	}
 
 	public void run() throws IOException, JPLEphemerisException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -165,6 +175,17 @@ public class TASS17SimpleController {
     			
     		case "auto":
     			setAutoCentre();
+    			break;
+    			
+    		case "animate":
+    			int nSteps = Integer.parseInt(words[1]);
+    			double stepSize = Double.parseDouble(words[2]);
+    			long sleep = Long.parseLong(words[3]);
+    			try {
+					animate(nSteps, stepSize, sleep);
+				} catch (JPLEphemerisException | InterruptedException e) {
+					e.printStackTrace();
+				}
     			break;
     			
     		case "quit":
