@@ -84,8 +84,24 @@ public class TASS17View extends JPanel {
 		this.yc = yc;
 	}
 	
+	public double getXCentre() {
+		return xc;
+	}
+	
+	public double getYCentre() {
+		return yc;
+	}
+	
 	public void setAutoCentre(boolean autoCentre) {
 		this.autoCentre = autoCentre;
+	}
+	
+	public void setScale(double scale) {
+		this.scale = scale;
+	}
+	
+	public double getScale() {
+		return scale;
 	}
 	
 	public double getSaturnRadius() {

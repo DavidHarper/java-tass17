@@ -122,6 +122,22 @@ public class TASS17SimpleController {
 		double jdNow = 2440587.5 + ((double)millis)/86400000.0;
 		setTime(jdNow);
 	}
+	
+	public void setScale(double scale) {
+		view.setScale(scale);
+		view.repaint();
+	}
+	
+	public void setCentre(double xc, double yc) {
+		view.setAutoCentre(false);
+		view.setCentre(xc, yc);
+		view.repaint();
+	}
+	
+	public void setAutoCentre() {
+		view.setAutoCentre(true);
+		view.repaint();
+	}
 
 	public void run() throws IOException, JPLEphemerisException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -132,36 +148,49 @@ public class TASS17SimpleController {
     		
     		if (line == null || line.trim().length() == 0)
     			System.exit(0);
+    		
     		String[] words = line.trim().split("\s+");
     		
-    		int year = 0, month = 0, day = 0, hour = 0, minute = 0;
-    		
-    		switch (words.length){
-    		case 1:
-    			jd = Double.parseDouble(line);
+    		switch (words[0].toLowerCase()) {
+    		case "scale":
+    			double scale = Double.parseDouble(words[1]);
+    			setScale(scale);
     			break;
     			
-    		case 5:
-    			hour = Integer.parseInt(words[3]);
-    			minute = Integer.parseInt(words[4]);
-    			// Fall through ...
-    			
-    		case 3:
-    			year = Integer.parseInt(words[0]);
-    			month = Integer.parseInt(words[1]);
-    			day = Integer.parseInt(words[2]);
-    			
-    			AstronomicalDate ad = new AstronomicalDate(year, month, day, hour, minute, 0.0);
-    			
-    			jd = ad.getJulianDate();
+    		case "centre":
+    			double xc = Double.parseDouble(words[1]);
+    			double yc = Double.parseDouble(words[2]);
+    			setCentre(xc, yc);
     			break;
+    			
+    		case "auto":
+    			setAutoCentre();
+    			break;
+    			
+    		case "quit":
+    		case "exit":
+    			System.exit(0);
     			
     		default:
-    			System.err.println("Invalid input");
-    			System.exit(1);
+    			if (words.length == 1) {
+        			jd = Double.parseDouble(line);
+        			setTime(jd);
+    			} else if (words.length == 5) {
+        			int year = Integer.parseInt(words[0]);
+        			int month = Integer.parseInt(words[1]);
+        			int day = Integer.parseInt(words[2]);
+        			int hour = Integer.parseInt(words[3]);
+        			int minute = Integer.parseInt(words[4]);
+        			
+        			AstronomicalDate ad = new AstronomicalDate(year, month, day, hour, minute, 0.0);
+        			
+        			jd = ad.getJulianDate();
+        			setTime(jd);   				
+    			} else {
+    				System.err.println("Invalid input");
+    			}
     		}
-    		    		
-    		setTime(jd);
+
     	}
 	}
 }
