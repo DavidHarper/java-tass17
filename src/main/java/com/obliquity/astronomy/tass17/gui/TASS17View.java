@@ -39,8 +39,6 @@ public class TASS17View extends JPanel {
 
 	private double xc = 0.0, yc = 0.0;
 	private double radius = 100.0;
-	private double sinEarthLatitude = 0.0;
-	private double positionAngle = 0.0;
 	
 	private boolean autoCentre = false;
 	
@@ -84,12 +82,16 @@ public class TASS17View extends JPanel {
 		this.radius = radius;
 	}
 	
-	public void setEarthLatitude(double earthLatitude) {
-		this.sinEarthLatitude = Math.sin(earthLatitude);
+	public double getEarthLatitude() {
+		return model.getSaturnRingAnglesForEarth().B * Math.PI/180.0;
 	}
 	
-	public void setPositionAngle(double positionAngle) {
-		this.positionAngle = positionAngle;
+	public double getSineEarthLatitude() {
+		return Math.sin(getEarthLatitude());
+	}
+
+	public double getPositionAngle() {
+		return model.getSaturnRingAnglesForEarth().P * Math.PI/180.0;
 	}
 	
 	public void paintComponent(Graphics gOriginal) {
@@ -111,7 +113,7 @@ public class TASS17View extends JPanel {
 		g.setColor(SATURN_COLOUR);
 		
 		AffineTransform xform = new AffineTransform();
-		xform.rotate(positionAngle, xc, yc);
+		xform.rotate(getPositionAngle(), xc, yc);
 		
 		Path2D.Double saturnGlobe = new Path2D.Double(Path2D.WIND_EVEN_ODD);
 		
@@ -125,7 +127,7 @@ public class TASS17View extends JPanel {
 		
 		path.append(new Rectangle2D.Double(xc-boxSize, yc-boxSize, 2.0*boxSize, 2.0*boxSize), false);
 		
-		path.append(new Arc2D.Double(xc-radius, yc-radius*FLATTENING, 2.0*radius, 2.0*radius*FLATTENING, 0.0f, sinEarthLatitude > 0.0 ? 180.0 : -180.0, Arc2D.PIE), false);
+		path.append(new Arc2D.Double(xc-radius, yc-radius*FLATTENING, 2.0*radius, 2.0*radius*FLATTENING, 0.0f, getSineEarthLatitude() > 0.0 ? 180.0 : -180.0, Arc2D.PIE), false);
 		
 		Shape savedClip = g.getClip();
 		
@@ -148,6 +150,8 @@ public class TASS17View extends JPanel {
 	}
 	
 	private Path2D.Double getRingPath(double innerRadius, double outerRadius) {
+		double sinEarthLatitude = getSineEarthLatitude();
+		
 		double innerWidth = radius * innerRadius;
 		double innerHeight = innerWidth * Math.abs(sinEarthLatitude);
 		

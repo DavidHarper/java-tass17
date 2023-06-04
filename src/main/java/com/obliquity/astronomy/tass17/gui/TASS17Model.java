@@ -63,6 +63,12 @@ public class TASS17Model {
 		this.apSun = new ApparentPlace(earth, sun, sun, erm);
 	}
 	
+	public void setTimeToNow() throws JPLEphemerisException {
+		long millis = System.currentTimeMillis();
+		double jdNow = 2440587.5 + ((double)millis)/86400000.0;
+		setTime(jdNow);
+	}
+	
 	public void setTime(double jd) throws JPLEphemerisException {
 		this.jd = jd;
 		calculateData();
@@ -101,7 +107,7 @@ public class TASS17Model {
 	}
 	
 	private void calculateData() throws JPLEphemerisException {
-		saturnData = AlmanacData.calculateAlmanacData(apSun, apSaturn, jd, AlmanacData.J2000, saturnData);
+		saturnData = AlmanacData.calculateAlmanacData(apSaturn, apSun, jd, AlmanacData.J2000, saturnData);
 		
 		double raSaturn = saturnData.rightAscension;
 		double ca = Math.cos(raSaturn);
