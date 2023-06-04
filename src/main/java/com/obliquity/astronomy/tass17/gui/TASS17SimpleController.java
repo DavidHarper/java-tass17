@@ -112,7 +112,6 @@ public class TASS17SimpleController {
 	}
 	
 	public void setTime(double jd) throws JPLEphemerisException {
-		System.err.printf("setTime(%13.5f)\n", jd);
 		model.setTime(jd);
 		view.repaint();
 	}
