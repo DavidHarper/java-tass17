@@ -122,8 +122,14 @@ public class TASS17Model {
     	TASSElements[] elements = new TASSElements[8];
     	
     	double[] position = new double[3];
+			
+		double q = (3600.0 * 180.0 / Math.PI)/apSaturn.getGeometricDistance();
+		
+		double lightTime = apSaturn.getLightTime();
+		
+		double jdSatellites = jd - lightTime;
 
-   		theory.calculateElements(jd, elements);
+   		theory.calculateElements(jdSatellites, elements);
   		
    		for (int iSat = 0; iSat < 8; iSat++) {
    			theory.calculatePosition(iSat, elements[iSat], position);
@@ -133,8 +139,6 @@ public class TASS17Model {
    			double xa = xe;
    			double ya = ye * cosObliquity - ze * sinObliquity;
    			double za = ye * sinObliquity + ze * cosObliquity;
-   			
-   			double q = (3600.0 * 180.0 / Math.PI)/apSaturn.getGeometricDistance();
    			
    			double ux = ca * cd, uy = sa * cd, uz = sd;
    			double vx = -sa * cd, vy = ca * cd, vz = 0.0;
