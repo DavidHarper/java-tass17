@@ -155,18 +155,27 @@ public class TASS17SimpleController {
 
 	public void run() throws IOException, JPLEphemerisException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		double step = 1.0;
 	
     	while (true) {
     		System.out.print("JAVA-TASS17 > ");
     		String line = br.readLine();
     		double jd = 0.0;
     		
-    		if (line == null || line.trim().length() == 0)
+    		if (line == null)
     			System.exit(0);
     		
-    		String[] words = line.trim().split("\s+");
+    		line = line.trim();
+
+    		String command = "step";
+    		String[] words = null;
     		
-    		switch (words[0].toLowerCase()) {
+    		if (line.length() > 0) {
+    			words = line.split("\s+");
+    			command = words[0].toLowerCase();
+    		}
+    		
+    		switch (command) {
     		case "scale":
     			double scale = Double.parseDouble(words[1]);
     			setScale(scale);
@@ -199,6 +208,15 @@ public class TASS17SimpleController {
     			
     		case "show":
     			model.show(System.out);
+    			break;
+    			
+    		case "stepsize":
+    			step = Double.parseDouble(words[1]);
+    			break;
+    			
+    		case "step":
+    			model.incrementTime(step);
+    			view.repaint();
     			break;
     			
     		case "quit":
