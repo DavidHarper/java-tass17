@@ -49,6 +49,9 @@ public class TASS17View extends JPanel {
 	private Color B_RING_COLOUR = new Color(0xFF, 0xFF, 0xF0);
 	private Color C_RING_COLOUR = new Color(0x66, 0x66, 0x57, 0x7f);
 	
+	private Color DARK_RING_COLOUR = Color.DARK_GRAY;
+	private Color UNLIT_RING_COLOUR = Color.DARK_GRAY.darker();
+	
 	private Color GRID_COLOUR = new Color(0x40, 0x40, 0x40);
 	
 	private Color SATELLITE_COLOUR = Color.RED;
@@ -112,6 +115,10 @@ public class TASS17View extends JPanel {
 	
 	public double getEarthLatitude() {
 		return model.getSaturnRingAnglesForEarth().B * Math.PI/180.0;
+	}
+	
+	public double getSunLatitude() {
+		return model.getSaturnRingAnglesForSun().B * Math.PI/180.0;
 	}
 	
 	public double getSineEarthLatitude() {
@@ -223,13 +230,23 @@ public class TASS17View extends JPanel {
 		Path2D.Double ringB = getRingPath(saturnRadius, 1.53, 1.95);
 		Path2D.Double ringC = getRingPath(saturnRadius, 1.24, 1.53);
 		
-		g.setColor(C_RING_COLOUR);
+		double earthB = getEarthLatitude();
+		double sunB = getSunLatitude();
+		
+		boolean ringsUnlit = (earthB < 0.0 && sunB > 0.0 ) || (earthB > 0.0 && sunB < 0.0);
+		boolean lowSunAngle = Math.abs(sunB) < 0.05;
+		
+		Color ringColour = ringsUnlit ? UNLIT_RING_COLOUR : (lowSunAngle ? DARK_RING_COLOUR : C_RING_COLOUR);
+		
+		g.setColor(ringColour);
 		g.fill(xform.createTransformedShape(ringC));
 		
-		g.setColor(B_RING_COLOUR);
+		ringColour = ringsUnlit ? UNLIT_RING_COLOUR : (lowSunAngle ? DARK_RING_COLOUR : B_RING_COLOUR);
+		g.setColor(ringColour);
 		g.fill(xform.createTransformedShape(ringB));
 		
-		g.setColor(A_RING_COLOUR);
+		ringColour = ringsUnlit ? UNLIT_RING_COLOUR : (lowSunAngle ? DARK_RING_COLOUR : A_RING_COLOUR);
+		g.setColor(ringColour);
 		g.fill(xform.createTransformedShape(ringA));
 		
 		g.setClip(savedClip);
