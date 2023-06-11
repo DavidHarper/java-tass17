@@ -169,8 +169,10 @@ public class TASS17Model {
 	public void show(PrintStream ps) {
 		ps.println(SEPARATOR);
 		ps.printf("JD = %13.5f = %s\n", jd, dateAsText);
-		ps.printf("Saturn\n    SD = %6.2f\n     B = %6.2f\n     P = %6.2f\n", getSaturnSemiDiameter(),
-				saturnData.saturnRingAnglesForEarth.B, saturnData.saturnRingAnglesForEarth.P);
+		ps.printf("Earth\n    SD = %6.2f\n     B = %6.2f\n     P = %6.2f\nSun\n     B = %6.2f\n",
+				getSaturnSemiDiameter(),
+				saturnData.saturnRingAnglesForEarth.B, saturnData.saturnRingAnglesForEarth.P,
+				saturnData.saturnRingAnglesForSun.B);
 		ps.println("Moons");
 		for (int iSat = 0; iSat < 8; iSat++)
 			ps.printf("    %1d    %8.3f  %8.3f  %8.3f\n", iSat, satelliteOffsets[iSat][0], satelliteOffsets[iSat][1], satelliteOffsets[iSat][2]);
