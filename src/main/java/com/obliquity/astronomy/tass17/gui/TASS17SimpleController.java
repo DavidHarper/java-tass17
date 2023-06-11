@@ -207,19 +207,29 @@ public class TASS17SimpleController {
     			
     		default:
     			if (words.length == 1) {
-        			jd = Double.parseDouble(line);
-        			setTime(jd);
+    				try {
+    					jd = Double.parseDouble(line);
+    					setTime(jd);
+    				}
+    				catch (NumberFormatException e) {
+    					e.printStackTrace();
+    				}
     			} else if (words.length == 5) {
-        			int year = Integer.parseInt(words[0]);
-        			int month = Integer.parseInt(words[1]);
-        			int day = Integer.parseInt(words[2]);
-        			int hour = Integer.parseInt(words[3]);
-        			int minute = Integer.parseInt(words[4]);
-        			
-        			AstronomicalDate ad = new AstronomicalDate(year, month, day, hour, minute, 0.0);
-        			
-        			jd = ad.getJulianDate();
-        			setTime(jd);   				
+    				try {
+    					int year = Integer.parseInt(words[0]);
+    					int month = Integer.parseInt(words[1]);
+    					int day = Integer.parseInt(words[2]);
+    					int hour = Integer.parseInt(words[3]);
+    					int minute = Integer.parseInt(words[4]);
+
+    					AstronomicalDate ad = new AstronomicalDate(year, month, day, hour, minute, 0.0);
+
+    					jd = ad.getJulianDate();
+    					setTime(jd);
+    				}
+    				catch (NumberFormatException e) {
+    					e.printStackTrace();
+    				}
     			} else {
     				System.err.println("Invalid input");
     			}
