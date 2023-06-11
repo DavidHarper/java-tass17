@@ -182,6 +182,10 @@ public class TASS17SimpleController {
     			setAutoCentre();
     			break;
     			
+    		case "now":
+    			setTimeToNow();
+    			break;
+    			
     		case "animate":
     			int nSteps = Integer.parseInt(words[1]);
     			double stepSize = Double.parseDouble(words[2]);
