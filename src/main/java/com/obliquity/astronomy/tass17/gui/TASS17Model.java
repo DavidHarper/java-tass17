@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 
 import com.obliquity.astronomy.almanac.ApparentPlace;
+import com.obliquity.astronomy.almanac.AstronomicalDate;
 import com.obliquity.astronomy.almanac.EarthCentre;
 import com.obliquity.astronomy.almanac.IAUEarthRotationModel;
 import com.obliquity.astronomy.almanac.JPLEphemeris;
@@ -42,6 +43,7 @@ public class TASS17Model {
 	private double[][] satelliteOffsets = new double[8][3];
 	private boolean validData = false;
 	private AlmanacData saturnData = new AlmanacData();
+	private String dateAsText;
 
 	public TASS17Model(JPLEphemeris ephemeris) throws IOException {
 		this.theory = new TASSTheory();
@@ -106,6 +108,10 @@ public class TASS17Model {
 		return saturnData.semiDiameter;
 	}
 	
+	public String getDateAsText() {
+		return dateAsText;
+	}
+	
 	private void calculateData() throws JPLEphemerisException {
 		saturnData = AlmanacData.calculateAlmanacData(apSaturn, apSun, jd, AlmanacData.J2000, saturnData);
 		
@@ -149,6 +155,12 @@ public class TASS17Model {
    			satelliteOffsets[iSat][2] = (ux * xa + uy * ya + uz * za) * q;
    		}
    		
+   		AstronomicalDate ad = new AstronomicalDate(jd);
+   		
+   		ad.roundToNearestMinute();
+   		
+   		dateAsText = String.format("%4d-%02d-%02d %02d:%02d", ad.getYear(), ad.getMonth(), ad.getDay(), ad.getHour(), ad.getMinute());
+   		
    		validData = true;
 	}
 
@@ -156,7 +168,7 @@ public class TASS17Model {
 	
 	public void show(PrintStream ps) {
 		ps.println(SEPARATOR);
-		ps.printf("JD = %13.5f\n", jd);
+		ps.printf("JD = %13.5f = %s\n", jd, dateAsText);
 		ps.printf("Saturn\n    SD = %6.2f\n     B = %6.2f\n     P = %6.2f\n", getSaturnSemiDiameter(),
 				saturnData.saturnRingAnglesForEarth.B, saturnData.saturnRingAnglesForEarth.P);
 		ps.println("Moons");

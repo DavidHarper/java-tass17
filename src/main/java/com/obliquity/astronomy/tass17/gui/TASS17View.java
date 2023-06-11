@@ -53,6 +53,8 @@ public class TASS17View extends JPanel {
 	
 	private Color SATELLITE_COLOUR = Color.RED;
 	
+	private Color DATE_COLOUR = Color.YELLOW;
+	
 	private final String[] SATELLITE_LABELS = {
 			"Mi", "En", "Te", "Di", "Rh", "Ti", "Hy", "Ia"
 	};
@@ -252,6 +254,11 @@ public class TASS17View extends JPanel {
 
 			g.drawString(SATELLITE_LABELS[iSat], (float)xSat + 3.0f, (float)ySat + 3.0f);
 		}
+		
+		g.setColor(DATE_COLOUR);
+		g.setFont(new Font("SansSerif", Font.PLAIN, 20));
+		
+		g.drawString(model.getDateAsText(), 10.0f, 25.0f);
 	}
 	
 	private Path2D.Double getRingPath(double saturnRadius, double innerRadius, double outerRadius) {
