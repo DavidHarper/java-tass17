@@ -242,17 +242,27 @@ public class TASS17View extends JPanel {
 		for (int iSat = 0; iSat < 8; iSat++) {
 			model.getSatelliteOffsets(iSat, offsets);
 			
-			dx = scale * offsets[0];
-			dy = scale * offsets[1];
+			dx = offsets[0];
+			dy = offsets[1];
+			double dz = offsets[2];
 			
-			double xSat = xc - dx;
-			double ySat = yc - dy;
+			double saturnA = model.getSaturnSemiDiameter();
+			double saturnB = FLATTENING * saturnA;
 			
-			Shape moon = new Ellipse2D.Double(xSat - 2.0, ySat - 2.0, 4.0, 4.0);
+			double rSquared = Math.pow(dx/saturnA, 2.0) + Math.pow(dy/saturnB, 2.0);
 			
-			g.fill(moon);
+			boolean visible = rSquared > 1.0 || dz < 0.0;
 
-			g.drawString(SATELLITE_LABELS[iSat], (float)xSat + 3.0f, (float)ySat + 3.0f);
+			if (visible) {
+				double xSat = xc - scale * dx;
+				double ySat = yc - scale * dy;
+
+				Shape moon = new Ellipse2D.Double(xSat - 2.0, ySat - 2.0, 4.0, 4.0);
+
+				g.fill(moon);
+
+				g.drawString(SATELLITE_LABELS[iSat], (float)xSat + 3.0f, (float)ySat + 3.0f);
+			}
 		}
 		
 		g.setColor(DATE_COLOUR);
