@@ -78,7 +78,7 @@ displays a graphical representation of Saturn and its satellites as
 seen from Earth.  The program reads commands from standard input.
 The most useful commands are as follows:
 
-- **<RETURN>** increments the time by the current step size and re-draws the view.
+- **&lt;RETURN&gt;** increments the time by the current step size and re-draws the view.
 - **NNNNNNN.N** sets the time to the specified Julian Date and re-draws the view.
 - **YYYY MM DD HH MM** sets the date and time and re-draws the view.
 - **scale N** changes the scale to *N* pixels per arc-second. The default is 10.
