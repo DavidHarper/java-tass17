@@ -81,6 +81,7 @@ The most useful commands are as follows:
 - **&lt;RETURN&gt;** increments the time by the current step size and re-draws the view.
 - **NNNNNNN.N** sets the time to the specified Julian Date and re-draws the view.
 - **YYYY MM DD HH MM** sets the date and time and re-draws the view.
+- **now** sets the time to the current time and re-draws the view.
 - **scale N** changes the scale to *N* pixels per arc-second. The default is 10.
 - **stepsize N** changes the step size to *N* days. The default is 1.
 - **animate STEPS STEPSIZE PAUSE** runs a basic animation, incrementing the time by the
