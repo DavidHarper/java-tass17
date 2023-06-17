@@ -1,7 +1,16 @@
 # java-tass17
 
 Java classes to calculate positions of Saturn's major satellites
-using the TASS 1.7 orbit model.
+using the TASS 1.7 orbit model developed by Alain Vienne and Luc Duriez.
+For full details of the development and use of the TASS 1.7 model,
+see the following papers by Vienne and Duriez which were published in the journal
+*Astronomy & Astrophysics* between 1991 and 1997:
+
+- [A general theory of motion for the eight major satellites of Saturn. I - Equations and method of resolution](https://ui.adsabs.harvard.edu/abs/1991A%26A...243..263D/abstract)
+- [A general theory of motion for the eight major satellites of Saturn. II - Short-period perturbations](https://ui.adsabs.harvard.edu/abs/1991A%26A...246..619V/abstract)
+- [A general theory of motion for the eight major satellites of Saturn. III - Long-period perturbations](https://ui.adsabs.harvard.edu/abs/1992A%26A...257..331V/abstract)
+- [TASS1.6: Ephemerides of the major Saturnian satellites](https://ui.adsabs.harvard.edu/abs/1995A%26A...297..588V/abstract)
+- [Theory of motion and ephemerides of Hyperion](https://ui.adsabs.harvard.edu/abs/1997A%26A...324..366D/abstract)
 
 ## Building the library
 
