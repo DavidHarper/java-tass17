@@ -96,7 +96,7 @@ the program.
 
 See the source code for a full list of commands.
 
-The Java run-time property *saturnobserver.ephemerishome*
+The Java run-time property *tass17simplecontroller.ephemerishome*
 **must** be defined, and it must point to the directory
 containing the JPL DE430 ephemeris.  The ephemeris file is assumed
 to be named *de430/lnxp1550p2650.430* **relative** to the directory
