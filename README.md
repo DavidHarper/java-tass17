@@ -85,9 +85,10 @@ The most useful commands are as follows:
 - **scale N** changes the scale to *N* pixels per arc-second. The default is 10.
 - **stepsize N** changes the step size to *N* days. The default is 1.
 - **animate STEPS STEPSIZE PAUSE** runs a basic animation, incrementing the time by the
-specified stepsize, re-drawing the view, and then pausing for the specified number of
-milliseconds (except after the final step). Note that this does **NOT** change the
-stepsize that is set using the **stepsize** command.
+specified stepsize, re-drawing the view, pausing for the specified number of
+milliseconds (except after the final step), and repeating the process for the specified
+number of steps. Note that this command does **NOT** change the stepsize that is set
+using the **stepsize** command.
 - **show** displays the positions of the satellites at the time that is currently
 being displayed.  It is mainly for diagnostic use.
 - **quit** or **exit** exits the program. **Ctrl+D** or end-of-file will also exit
