@@ -133,13 +133,13 @@ public class TASSTheory {
 		}
 	}
 	
+	private static final double EPSILON = 1.0e-10;
+	
 	/*
 	 * This method is a direct transcription of the FORTRAN subroutine EDERED. 
 	 */
-	
-	private static final double EPSILON = 1.0e-10;
-	
-	public void calculatePosition(int iSat, TASSElements elements, double[] position) {
+
+	public void calculatePositionAndVelocity(int iSat, TASSElements elements, double[] position, double[] velocity) {
 		if (position == null || position.length != 3)
 			position = new double[3];
 		
@@ -166,6 +166,8 @@ public class TASSTheory {
 		sf = sin(fle);
 		
 		double dlf = -rk * sf + rh * cf;
+		double rsam1 = -rk * cf -rh * sf;
+		double asr = 1.0/(1.0 + rsam1);
 		double phi = sqrt(1.0 - rk * rk - rh * rh);
 		double psi = 1.0/(1.0 + phi);
 		
@@ -184,7 +186,6 @@ public class TASSTheory {
 		double y2 = x1 * rdg + y1 * rtq;
 		double z2 = (-x1 * p + y1 * q) * dwho;
 
-		
 		double CO = TASSConstants.CO;
 		double SO = TASSConstants.SO;
 		double CI = TASSConstants.CI;
@@ -197,5 +198,26 @@ public class TASSTheory {
 		position[0] = x3 * dga;
 		position[1] = y3 * dga;
 		position[2] = z3 * dga;
+		
+		if (velocity != null && velocity.length >= 3) {		
+			double vx1 = am0 * asr * dga * (-sf - psi * rh * rsam1);
+			double vy1 = am0 * asr * dga * (cf + psi * rh * rsam1);
+
+			double vx2 = vx1 * rtp + vy1 * rdg;
+			double vy2 = vx1 * rdg + vy1 * rtq;
+			double vz2 = (-vx1 * p + vy1 * q) * dwho;
+			
+			double vx3 = CO * vx2 - SO * CI * vy2 + SO * SI * vz2;
+			double vy3 = SO * vx2 + CO * CI * vy2 - CO * SI * vz2;
+			double vz3 =                 SI * vy2 + CI * vz2;
+			
+			velocity[0] = vx3 * dga;
+			velocity[1] = vy3 * dga;
+			velocity[2] = vz3 * dga;
+		}
+	}
+	
+	public void calculatePosition(int iSat, TASSElements elements, double[] position) {
+		calculatePositionAndVelocity(iSat, elements, position, null);
 	}
 }
