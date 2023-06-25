@@ -52,7 +52,7 @@ public class TheoryTester {
     		
     		double jd = Double.parseDouble(line);
     		
-    		theory.calculateElements(jd, elements);
+    		theory.calculateElementsForAllSatellites(jd, elements);
   		
     		for (int iSat = 0; iSat < 8; iSat++) {   			
     			System.out.printf(" %13.5f %d %13.8f %13.8f %13.8f %13.8f %13.8f %13.8f\n", jd, iSat+1,

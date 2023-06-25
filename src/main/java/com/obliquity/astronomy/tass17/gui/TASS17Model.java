@@ -135,7 +135,7 @@ public class TASS17Model {
 		
 		double jdSatellites = jd - lightTime;
 
-   		theory.calculateElements(jdSatellites, elements);
+   		theory.calculateElementsForAllSatellites(jdSatellites, elements);
   		
    		for (int iSat = 0; iSat < 8; iSat++) {
    			theory.calculatePosition(iSat, elements[iSat], position);

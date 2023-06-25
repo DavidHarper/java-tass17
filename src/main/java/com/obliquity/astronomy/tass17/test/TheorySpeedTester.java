@@ -55,7 +55,7 @@ public class TheorySpeedTester {
     	long tick0 = System.currentTimeMillis();
     	
     	for (int i = 0; i < steps; i++) {
-    		theory.calculateElements(jd, elements);
+    		theory.calculateElementsForAllSatellites(jd, elements);
   		
     		for (int iSat = 0; iSat < 8; iSat++) {   			    			
     			theory.calculatePosition(iSat, elements[iSat], position);

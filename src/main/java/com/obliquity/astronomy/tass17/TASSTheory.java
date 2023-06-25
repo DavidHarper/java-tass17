@@ -43,7 +43,58 @@ public class TASSTheory {
     	}
 	}
 	
-	public void calculateElements(double jd, TASSElements[] elements) {
+	private void calculateCriticalTermsInLongitude(double jd, double[] deltaLambda) {
+		if (deltaLambda == null || deltaLambda.length < 8)
+			throw new IllegalArgumentException("deltaLambda array is null or too small");
+		
+		double t = (jd - TASSConstants.EPOCH)/365.25;
+		
+		for (int iSat = 0; iSat < 8; iSat++) {	
+			if (iSat == 6)
+				deltaLambda[iSat] = 0.0;
+			else
+				deltaLambda[iSat] = elementSeries[iSat][1].calculateCriticalTermsInSine(t, null);			
+		}
+	}
+	
+	public void calculateElements(double jd, int iSat, TASSElements elements) {
+		double[] deltaLambda = new double[8];
+		
+		calculateCriticalTermsInLongitude(jd, deltaLambda);
+		
+		double t = (iSat == 6) ? jd - TASSConstants.EPOCH_HYPERION : (jd - TASSConstants.EPOCH)/365.25;
+		
+		elements.meanMotionAdjustment = elementSeries[iSat][0].getConstantTerm() + elementSeries[iSat][0].calculateAllTermsInCosine(t, deltaLambda);
+		
+		double lambda = (elementSeries[iSat][1].calculateLinearTerm(t) + deltaLambda[iSat] +
+				elementSeries[iSat][1].calculateShortPeriodTermsInSine(t, deltaLambda)) % TWO_PI;
+		
+		if (lambda > Math.PI)
+			lambda -= TWO_PI;
+		
+		if (lambda < -Math.PI)
+			lambda += TWO_PI;
+
+		elements.lambda = lambda;
+		
+		elements.k = elementSeries[iSat][2].calculateAllTermsInCosine(t, deltaLambda);
+		
+		elements.h = elementSeries[iSat][2].calculateAllTermsInSine(t, deltaLambda);
+		
+		elements.q = elementSeries[iSat][3].calculateAllTermsInCosine(t, deltaLambda);
+		
+		elements.p = elementSeries[iSat][3].calculateAllTermsInSine(t, deltaLambda);			
+	}
+	
+	public TASSElements calculateElements(double jd, int iSat) {
+		TASSElements elements = new TASSElements();
+		
+		calculateElements(jd, iSat, elements);
+		
+		return elements;
+	}
+	
+	public void calculateElementsForAllSatellites(double jd, TASSElements[] elements) {
 		if (elements == null || elements.length < 8)
 			throw new IllegalArgumentException("Elements array is null or too small");
 		
@@ -53,24 +104,11 @@ public class TASSTheory {
 		}
 		
     	double[] deltaLambda = new double[8];
+    	
+    	calculateCriticalTermsInLongitude(jd, deltaLambda);
 
 		for (int iSat = 0; iSat < 8; iSat++) {
-			double t = (jd - TASSConstants.EPOCH)/365.25;
-			
-			if (iSat == 6)
-				deltaLambda[iSat] = 0.0;
-			else
-				deltaLambda[iSat] = elementSeries[iSat][1].calculateCriticalTermsInSine(t, null);			
-		}
-
-		for (int iSat = 0; iSat < 8; iSat++) {
-			double t;
-			
-			if (iSat == 6) {
-				t = jd - TASSConstants.EPOCH_HYPERION;
-			} else {
-				t = (jd - TASSConstants.EPOCH)/365.25;
-			}
+			double t= (iSat == 6) ? jd - TASSConstants.EPOCH_HYPERION : (jd - TASSConstants.EPOCH)/365.25;
 			
 			elements[iSat].meanMotionAdjustment = elementSeries[iSat][0].getConstantTerm() + elementSeries[iSat][0].calculateAllTermsInCosine(t, deltaLambda);
 			

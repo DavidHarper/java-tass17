@@ -159,7 +159,7 @@ public class SaturnObserver {
     	
     	double[] position = new double[3];
 
-   		theory.calculateElements(jd, elements);
+   		theory.calculateElementsForAllSatellites(jd, elements);
   		
    		for (int iSat = 0; iSat < 8; iSat++) {
    			theory.calculatePosition(iSat, elements[iSat], position);
