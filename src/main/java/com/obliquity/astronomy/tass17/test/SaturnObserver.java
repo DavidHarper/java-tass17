@@ -22,6 +22,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 
 import com.obliquity.astronomy.almanac.ApparentPlace;
 import com.obliquity.astronomy.almanac.AstronomicalDate;
@@ -32,13 +33,17 @@ import com.obliquity.astronomy.almanac.JPLEphemerisException;
 import com.obliquity.astronomy.almanac.MovingPoint;
 import com.obliquity.astronomy.almanac.PlanetCentre;
 import com.obliquity.astronomy.tass17.TASSElements;
+import com.obliquity.astronomy.tass17.TASSMovingPoint;
 import com.obliquity.astronomy.tass17.TASSTheory;
 
 public class SaturnObserver {
 	private ApparentPlace apSaturn;
+	private ApparentPlace[] apSatellites;
 	private IAUEarthRotationModel erm = null;
 	private TASSTheory theory;
 	private final double cosObliquity, sinObliquity;
+	
+	private final String[] names = { "Mim", "Enc", "Tet", "Dio", "Rhe", "Ttn", "Hyp", "Iap" };
 	
 	private boolean timeIsUT = Boolean.getBoolean("saturnobserver.timeisut");
 	private boolean usePositionOfDate = Boolean.getBoolean("saturnobserver.usepositionofdate");
@@ -78,7 +83,7 @@ public class SaturnObserver {
 		}
 	}
 	
-	public SaturnObserver(JPLEphemeris ephemeris, TASSTheory theory) {
+	public SaturnObserver(JPLEphemeris ephemeris, TASSTheory theory) throws IOException {
 		this.theory = theory;
 		
 		this.erm = new IAUEarthRotationModel();
@@ -95,6 +100,13 @@ public class SaturnObserver {
 		MovingPoint saturn = new PlanetCentre(ephemeris, JPLEphemeris.SATURN);
 		
 		this.apSaturn = new ApparentPlace(earth, saturn, sun, erm);
+		
+		apSatellites = new ApparentPlace[8];
+		
+		for (int iSat = 0; iSat < 8; iSat++) {
+			MovingPoint satellite = new TASSMovingPoint(ephemeris, iSat);
+			apSatellites[iSat] = new ApparentPlace(earth, satellite, sun, erm);
+		}
 	}
 	
 	public void run() throws IOException, JPLEphemerisException {
@@ -160,7 +172,9 @@ public class SaturnObserver {
     	double[] position = new double[3];
 
    		theory.calculateElementsForAllSatellites(jd, elements);
-  		
+   		
+   		printPosition(System.out, "SAT", jd, raSaturn, decSaturn);
+
    		for (int iSat = 0; iSat < 8; iSat++) {
    			theory.calculatePosition(iSat, elements[iSat], position);
    			
@@ -180,7 +194,48 @@ public class SaturnObserver {
    			double dy = (wx * xa + wy * ya + wz * za) * q;
    			double dz = (ux * xa + uy * ya + uz * za) * q;
    			
-   			System.out.printf(" %13.5f %1d  %8.3f  %8.3f  %8.3f\n", jd, iSat, dx, dy, dz);
+   			apSatellites[iSat].calculateApparentPlace(jd);
+   			double raSatellite = usePositionOfDate ? apSatellites[iSat].getRightAscensionOfDate() : apSatellites[iSat].getRightAscensionJ2000();
+   			double decSatellite = usePositionOfDate ? apSatellites[iSat].getDeclinationOfDate() : apSatellites[iSat].getDeclinationJ2000();
+   			double dx2 = (raSatellite - raSaturn) * Math.cos(decSaturn) * 3600.0 * 180.0/Math.PI;
+   			double dy2 = (decSatellite - decSaturn) * 3600.0 * 180.0/Math.PI;
+   			
+   			System.out.println();
+   			printPosition(System.out, names[iSat], jd, raSatellite, decSatellite);
+   			System.out.printf(" %13.5f %3s  %8.3f  %8.3f\n", jd, names[iSat], dx2, dy2);  			
+   			System.out.printf(" %13.5f %3s  %8.3f  %8.3f  %8.3f\n", jd, names[iSat], dx, dy, dz);
    		}
+	}
+	
+	private void printPosition(PrintStream ps, String name, double jd, double ra, double dec) {
+		ra *= 12.0/Math.PI;
+		
+		if (ra < 0.0)
+			ra += 24.0;
+		
+		int rah = (int)ra;
+		
+		ra = 60.0 * (ra - rah);
+		
+		int ram = (int)ra;
+		
+		ra = 60.0 * (ra - ram);
+		
+		String decSign = dec < 0.0 ? "-" : "+";
+		
+		if (dec < 0.0)
+			dec = -dec;
+		
+		dec *= 180.0/Math.PI;
+		
+		int decd = (int)dec;
+		
+		dec = 60.0 * (dec - decd);
+		
+		int decm = (int)dec;
+		
+		dec = 60.0 * (dec - decm);
+		
+		ps.printf(" %13.5f %3s  %2d %02d %07.4f   %1s %2d %02d %7.3f\n", jd, name, rah, ram, ra, decSign, decd, decm, dec);
 	}
 }
