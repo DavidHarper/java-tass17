@@ -166,7 +166,7 @@ public class TASSTheory {
 		sf = sin(fle);
 		
 		double dlf = -rk * sf + rh * cf;
-		double rsam1 = -rk * cf -rh * sf;
+		double rsam1 = -rk * cf - rh * sf;
 		double asr = 1.0/(1.0 + rsam1);
 		double phi = sqrt(1.0 - rk * rk - rh * rh);
 		double psi = 1.0/(1.0 + phi);
@@ -200,8 +200,8 @@ public class TASSTheory {
 		position[2] = z3 * dga;
 		
 		if (velocity != null && velocity.length >= 3) {		
-			double vx1 = am0 * asr * dga * (-sf - psi * rh * rsam1);
-			double vy1 = am0 * asr * dga * (cf + psi * rh * rsam1);
+			double vx1 = am0 * asr * (-sf - psi * rh * rsam1)/365.25;
+			double vy1 = am0 * asr * (cf + psi * rh * rsam1)/365.25;
 
 			double vx2 = vx1 * rtp + vy1 * rdg;
 			double vy2 = vx1 * rdg + vy1 * rtq;
