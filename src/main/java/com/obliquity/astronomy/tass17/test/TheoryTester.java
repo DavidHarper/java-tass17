@@ -43,6 +43,7 @@ public class TheoryTester {
     	TASSElements[] elements = new TASSElements[8];
     	
     	double[] position = new double[3];
+    	double[] velocity = new double[3];
     	
     	while (true) {
     		String line = br.readLine();
@@ -55,7 +56,7 @@ public class TheoryTester {
     		theory.calculateElementsForAllSatellites(jd, elements);
   		
     		for (int iSat = 0; iSat < 8; iSat++) {   			
-    			System.out.printf(" %13.5f %d %13.8f %13.8f %13.8f %13.8f %13.8f %13.8f\n", jd, iSat+1,
+    			System.out.printf(" %13.5f %d  %13.8f %13.8f %13.8f  %13.8f %13.8f %13.8f\n", jd, iSat+1,
     					elements[iSat].meanMotionAdjustment,
     					elements[iSat].lambda,
     					elements[iSat].k,
@@ -63,9 +64,14 @@ public class TheoryTester {
     					elements[iSat].q,
     					elements[iSat].p);
     			
-    			theory.calculatePosition(iSat, elements[iSat], position);
+    			theory.calculatePositionAndVelocity(iSat, elements[iSat], position, velocity);
     			
-    			System.out.printf(" %13.5f %d %13.8f %13.8f %13.8f\n",jd,  iSat+1, position[0], position[1], position[2]);
+    			double speed = Math.sqrt(velocity[0]*velocity[0] + velocity[1]*velocity[1] + velocity[2]*velocity[2]);
+    			
+    			System.out.printf(" %13.5f %d  %13.8f %13.8f %13.8f  %13.8f %13.8f %13.8f  (%13.8f)\n",jd,  iSat+1,
+    					position[0], position[1], position[2],
+    					velocity[0], velocity[1], velocity[2],
+    					speed);
     		}
     	}
     }
