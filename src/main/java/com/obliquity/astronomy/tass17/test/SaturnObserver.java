@@ -208,8 +208,9 @@ public class SaturnObserver {
    			
    			System.out.println();
    			printPosition(System.out, names[iSat], jd, raSatellite, decSatellite);
-   			System.out.printf(" %13.5f %3s  %8.3f  %8.3f %9.6f\n", jd, names[iSat], dx2, dy2, gdSatellite - gdSaturn);  			
-   			System.out.printf(" %13.5f %3s  %8.3f  %8.3f  %8.3f\n", jd, names[iSat], dx, dy, dz);
+   			System.out.printf(" %13.5f REL %3s  %8.3f  %8.3f %9.6f\n", jd, names[iSat], dx2, dy2, gdSatellite - gdSaturn);  			
+   			System.out.printf(" %13.5f DXY %3s  %8.3f  %8.3f  %8.3f\n", jd, names[iSat], dx, dy, dz);
+   			System.out.printf(" %13.5f DIF %3s  %8.3f  %8.3f\n", jd, names[iSat], dx2-dx, dy2-dy);
    		}
 	}
 	
@@ -242,6 +243,6 @@ public class SaturnObserver {
 		
 		dec = 60.0 * (dec - decm);
 		
-		ps.printf(" %13.5f %3s  %2d %02d %07.4f   %1s %2d %02d %7.3f\n", jd, name, rah, ram, ra, decSign, decd, decm, dec);
+		ps.printf(" %13.5f ABS %3s %2d %02d %07.4f   %1s %2d %02d %7.3f\n", jd, name, rah, ram, ra, decSign, decd, decm, dec);
 	}
 }
