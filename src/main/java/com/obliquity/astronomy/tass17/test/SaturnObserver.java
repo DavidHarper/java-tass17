@@ -176,6 +176,8 @@ public class SaturnObserver {
     	theory.calculateElementsForAllSatellites(jdSatellites, elements);
 
    		printPosition(System.out, "SAT", jd, raSaturn, decSaturn);
+   		
+   		double gdSaturn = apSaturn.getGeometricDistance();
 
    		for (int iSat = 0; iSat < 8; iSat++) {
    			theory.calculatePosition(iSat, elements[iSat], position);
@@ -202,9 +204,11 @@ public class SaturnObserver {
    			double dx2 = (raSatellite - raSaturn) * Math.cos(decSaturn) * 3600.0 * 180.0/Math.PI;
    			double dy2 = (decSatellite - decSaturn) * 3600.0 * 180.0/Math.PI;
    			
+   			double gdSatellite = apSatellites[iSat].getGeometricDistance();
+   			
    			System.out.println();
    			printPosition(System.out, names[iSat], jd, raSatellite, decSatellite);
-   			System.out.printf(" %13.5f %3s  %8.3f  %8.3f\n", jd, names[iSat], dx2, dy2);  			
+   			System.out.printf(" %13.5f %3s  %8.3f  %8.3f %9.6f\n", jd, names[iSat], dx2, dy2, gdSatellite - gdSaturn);  			
    			System.out.printf(" %13.5f %3s  %8.3f  %8.3f  %8.3f\n", jd, names[iSat], dx, dy, dz);
    		}
 	}
