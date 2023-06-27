@@ -147,7 +147,7 @@ public class TASS17Model {
    			double za = ye * sinObliquity + ze * cosObliquity;
    			
    			double ux = ca * cd, uy = sa * cd, uz = sd;
-   			double vx = -sa * cd, vy = ca * cd, vz = 0.0;
+   			double vx = -sa, vy = ca, vz = 0.0;
    			double wx = -ca * sd, wy = -sa * sd, wz = cd;
    			
    			satelliteOffsets[iSat][0] = (vx * xa + vy * ya + vz * za) * q;
