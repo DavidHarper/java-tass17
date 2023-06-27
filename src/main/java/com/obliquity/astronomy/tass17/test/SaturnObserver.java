@@ -170,9 +170,11 @@ public class SaturnObserver {
     	TASSElements[] elements = new TASSElements[8];
     	
     	double[] position = new double[3];
+    	
+    	double jdSatellites = jd - apSaturn.getLightTime();
 
-   		theory.calculateElementsForAllSatellites(jd, elements);
-   		
+    	theory.calculateElementsForAllSatellites(jdSatellites, elements);
+
    		printPosition(System.out, "SAT", jd, raSaturn, decSaturn);
 
    		for (int iSat = 0; iSat < 8; iSat++) {
@@ -187,7 +189,7 @@ public class SaturnObserver {
    			double q = (3600.0 * 180.0 / Math.PI)/apSaturn.getGeometricDistance();
    			
    			double ux = ca * cd, uy = sa * cd, uz = sd;
-   			double vx = -sa * cd, vy = ca * cd, vz = 0.0;
+   			double vx = -sa, vy = ca, vz = 0.0;
    			double wx = -ca * sd, wy = -sa * sd, wz = cd;
    			
    			double dx = (vx * xa + vy * ya + vz * za) * q;
