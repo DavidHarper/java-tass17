@@ -51,6 +51,25 @@ public class SaturnObserver {
 	public static void main(String[] args) {
 		String ephemerisHomeName = System.getProperty("saturnobserver.ephemerishome");
 		
+		boolean dxy = true;
+		boolean tabulate = false;
+		
+		for (int i = 0; i < args.length; i++) {
+			switch (args[i].toLowerCase()) {
+			case "-rel":
+				dxy = false;
+				break;
+				
+			case "-tabulate":
+				tabulate = true;
+				break;
+				
+			default:
+				System.err.println("Option not recognised: " + args[i]);
+				System.exit(1);
+			}
+		}
+		
 		if (ephemerisHomeName == null) {
 			System.err.println("Set property saturnobserver.ephemerishome and re-run");
 			System.exit(1);
@@ -77,7 +96,10 @@ public class SaturnObserver {
 			
 			SaturnObserver observer = new SaturnObserver(ephemeris, theory);
 			
-			observer.run();
+			if (tabulate)
+				observer.tabulate(dxy);
+			else
+				observer.run();
 		} catch (IOException | JPLEphemerisException e) {
 			e.printStackTrace();
 		}
@@ -149,11 +171,103 @@ public class SaturnObserver {
     		}
     		
     		if (!Double.isNaN(jd))
-    			calculateSatelliteOffsets(jd);
+    			calculateAndDisplaySatelliteOffsets(jd);
     	}
 	}
 	
-	private void calculateSatelliteOffsets(double jd) throws JPLEphemerisException {
+	public void tabulate(boolean dxy) throws IOException, JPLEphemerisException {
+    	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    	String line = br.readLine();
+		
+		if (line == null)
+			System.exit(0);
+		
+		String[] words = line.trim().split("\s+");
+		
+		if (words.length != 3) {
+			System.err.println("Invalid input, expecting jdstart step numsteps");
+			System.exit(1);
+		}
+		
+		double jdstart = Double.parseDouble(words[0]);
+		double step = Double.parseDouble(words[1]);
+		int nSteps = Integer.parseInt(words[2]);
+		
+		tabulate(jdstart, step, nSteps, dxy);
+	}
+	
+	private void tabulate(double jdstart, double step, int nSteps, boolean dxy) throws JPLEphemerisException {
+		double jd = jdstart;
+		double[][] offsets = new double[8][3];
+		
+		for (int i = 0; i < nSteps; i++) {
+			calculateSatelliteOffsets(jd, offsets, dxy);
+			for (int iSat = 0; iSat < 8; iSat++) {
+				System.out.printf(" %13.5f  %1d  %8.3f  %8.3f\n", jd, iSat, offsets[iSat][0], offsets[iSat][1]);
+			}
+			jd += step;
+		}
+	}
+	
+	private void calculateSatelliteOffsets(double jd, double[][] offsets, boolean dxy) throws JPLEphemerisException {
+		if (timeIsUT)
+			jd += erm.deltaT(jd);
+		
+		apSaturn.calculateApparentPlace(jd);
+		
+		double raSaturn = usePositionOfDate ? apSaturn.getRightAscensionOfDate() : apSaturn.getRightAscensionJ2000();
+		double decSaturn = usePositionOfDate ? apSaturn.getDeclinationOfDate() : apSaturn.getDeclinationJ2000();
+		
+    	if (dxy) {
+        	double jdSatellites = jd - apSaturn.getLightTime();
+        	
+    		double ca = Math.cos(raSaturn);
+    		double sa = Math.sin(raSaturn);
+    		double cd = Math.cos(decSaturn);
+    		double sd = Math.sin(decSaturn);
+
+        	TASSElements[] elements = new TASSElements[8];
+        	theory.calculateElementsForAllSatellites(jdSatellites, elements);
+
+        	double[] position = new double[3];
+
+        	for (int iSat = 0; iSat < 8; iSat++) {
+       			theory.calculatePosition(iSat, elements[iSat], position);
+       			
+       			double xe = position[0], ye = position[1], ze = position[2];
+       			
+       			double xa = xe;
+       			double ya = ye * cosObliquity - ze * sinObliquity;
+       			double za = ye * sinObliquity + ze * cosObliquity;
+       			
+       			double q = (3600.0 * 180.0 / Math.PI)/apSaturn.getGeometricDistance();
+       			
+       			double ux = ca * cd, uy = sa * cd, uz = sd;
+       			double vx = -sa, vy = ca, vz = 0.0;
+       			double wx = -ca * sd, wy = -sa * sd, wz = cd;
+       			
+       			offsets[iSat][0] = (vx * xa + vy * ya + vz * za) * q;
+       			offsets[iSat][1] = (wx * xa + wy * ya + wz * za) * q;
+       			offsets[iSat][2] = (ux * xa + uy * ya + uz * za) * q;
+        	}
+    	} else {
+       		double gdSaturn = apSaturn.getGeometricDistance();
+
+        	for (int iSat = 0; iSat < 8; iSat++) {
+       			apSatellites[iSat].calculateApparentPlace(jd);
+       			
+       			double raSatellite = usePositionOfDate ? apSatellites[iSat].getRightAscensionOfDate() : apSatellites[iSat].getRightAscensionJ2000();
+       			double decSatellite = usePositionOfDate ? apSatellites[iSat].getDeclinationOfDate() : apSatellites[iSat].getDeclinationJ2000();
+       			double gdSatellite = apSatellites[iSat].getGeometricDistance();
+       			
+       			offsets[iSat][0] = (raSatellite - raSaturn) * Math.cos(decSaturn) * 3600.0 * 180.0/Math.PI;
+       			offsets[iSat][1] = (decSatellite - decSaturn) * 3600.0 * 180.0/Math.PI;
+       			offsets[iSat][2] = gdSatellite - gdSaturn;
+        	}
+    	}
+	}
+
+	private void calculateAndDisplaySatelliteOffsets(double jd) throws JPLEphemerisException {
 		if (timeIsUT)
 			jd += erm.deltaT(jd);
 		
