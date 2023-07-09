@@ -29,16 +29,17 @@ import com.obliquity.astronomy.tass17.chebyshev.SatelliteOffset;
 
 public class TestChebyshevCoefficients {
 	public static void main(String[] args) {
-		if (args.length != 5) {
-			System.err.println("Arguments: satnum component ncoeffs jdstart jdend");
+		if (args.length != 6) {
+			System.err.println("Arguments: satnum component ncoeffs method jdstart jdend");
 			System.exit(1);
 		}
 		
 		int iSat = Integer.parseInt(args[0]);
 		int iXYZ = Integer.parseInt(args[1]);
 		int N = Integer.parseInt(args[2]);
-		double jdstart = Double.parseDouble(args[3]);
-		double jdend = Double.parseDouble(args[4]);
+		int method = Integer.parseInt(args[3]);
+		double jdstart = Double.parseDouble(args[4]);
+		double jdend = Double.parseDouble(args[5]);
 		
 		String ephemerisHomeName = System.getProperty("testchebyshevcoefficients.ephemerishome");
 		
@@ -69,7 +70,7 @@ public class TestChebyshevCoefficients {
 			SatelliteOffset target = new SatelliteOffset(ephemeris, theory, iSat);
 			
 			target.setDateRange(jdstart, jdend);
-			target.setMethod(SatelliteOffset.SIMPLIFIED);
+			target.setMethod(method);
 			
 			double[] coeffs = new double[N];
 			
@@ -92,7 +93,7 @@ public class TestChebyshevCoefficients {
 					
 				Chebyshev.calculateChebyshevPolynomials(x, T);
 					
-				double approx = T[0];
+				double approx = coeffs[0];
 				
 				for (int j = 1; j < N; j++)
 					approx += coeffs[j] * T[j];
