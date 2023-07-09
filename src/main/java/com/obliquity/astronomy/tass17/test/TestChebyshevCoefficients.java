@@ -23,20 +23,22 @@ import java.io.IOException;
 
 import com.obliquity.astronomy.almanac.JPLEphemeris;
 import com.obliquity.astronomy.almanac.JPLEphemerisException;
+import com.obliquity.astronomy.almanac.chebyshev.Chebyshev;
 import com.obliquity.astronomy.tass17.TASSTheory;
 import com.obliquity.astronomy.tass17.chebyshev.SatelliteOffset;
 
 public class TestChebyshevCoefficients {
 	public static void main(String[] args) {
-		if (args.length != 4) {
-			System.err.println("Arguments: satnum ncoeffs jdstart jdend");
+		if (args.length != 5) {
+			System.err.println("Arguments: satnum component ncoeffs jdstart jdend");
 			System.exit(1);
 		}
 		
 		int iSat = Integer.parseInt(args[0]);
-		int N = Integer.parseInt(args[1]);
-		double jdstart = Double.parseDouble(args[2]);
-		double jdend = Double.parseDouble(args[3]);
+		int iXYZ = Integer.parseInt(args[1]);
+		int N = Integer.parseInt(args[2]);
+		double jdstart = Double.parseDouble(args[3]);
+		double jdend = Double.parseDouble(args[4]);
 		
 		String ephemerisHomeName = System.getProperty("testchebyshevcoefficients.ephemerishome");
 		
@@ -69,17 +71,36 @@ public class TestChebyshevCoefficients {
 			target.setDateRange(jdstart, jdend);
 			target.setMethod(SatelliteOffset.SIMPLIFIED);
 			
-			target.setComponent(SatelliteOffset.X_OFFSET);
-			double[] xCoeffs = target.calculateChebyshevCoefficients(N);
+			double[] coeffs = new double[N];
 			
-			target.setComponent(SatelliteOffset.Y_OFFSET);
-			double[] yCoeffs = target.calculateChebyshevCoefficients(N);
-			
-			target.setComponent(SatelliteOffset.Z_OFFSET);
-			double[] zCoeffs = target.calculateChebyshevCoefficients(N);
+			target.setComponent(iXYZ);
+			target.calculateChebyshevCoefficients(coeffs);
 			
 			for (int i = 0; i < N; i++)
-				System.out.printf("%3d  %17.13f  %17.13f  %17.13f\n", i, xCoeffs[i], yCoeffs[i], zCoeffs[i]);
+				System.out.printf("%3d  %17.13f\n", i, coeffs[i]);
+
+			double djd = (jdend - jdstart)/32.0;
+			
+			double[] T = new double[N];
+			
+			double jd = jdstart;
+				
+			for (int k = 0; k < 33; k++) {
+				double x = -1.0 + 2.0 * (jd - jdstart)/(jdend - jdstart);
+					
+				double exact = target.evaluate(x);
+					
+				Chebyshev.calculateChebyshevPolynomials(x, T);
+					
+				double approx = T[0];
+				
+				for (int j = 1; j < N; j++)
+					approx += coeffs[j] * T[j];
+				
+				System.out.printf("%13.5f %13.10f %13.4f %13.4f %13.4f\n", jd, x, exact, approx, exact-approx);
+					
+				jd += djd;
+			}
 		} catch (IOException | JPLEphemerisException e) {
 			e.printStackTrace();
 		}

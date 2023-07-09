@@ -112,7 +112,7 @@ public class SatelliteOffset implements Evaluatable {
 		if (tMinimum == 0.0 || tMaximum == 0.0)
 			throw new IllegalStateException("Date range has not been set");
 		
-		double t = tMinimum + x * (tMaximum - tMinimum);
+		double t = tMinimum + (x + 1.0) * (tMaximum - tMinimum)/2.0;
 		
 		try {
 			calculateOffsets(t);
