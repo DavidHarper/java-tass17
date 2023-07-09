@@ -169,7 +169,7 @@ public class SatelliteOffset implements Evaluatable {
 		double sd = Math.sin(decSaturn);
 
     	TASSElements elements = new TASSElements();
-    	theory.calculateElements(jdSatellites, iSat);
+    	theory.calculateElements(jdSatellites, iSat, elements);
 
     	double[] position = new double[3];
 
