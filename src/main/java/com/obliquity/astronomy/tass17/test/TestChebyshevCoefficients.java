@@ -41,10 +41,10 @@ public class TestChebyshevCoefficients {
 		double jdstart = Double.parseDouble(args[4]);
 		double jdend = Double.parseDouble(args[5]);
 		
-		String ephemerisHomeName = System.getProperty("testchebyshevcoefficients.ephemerishome");
+		String ephemerisHomeName = System.getProperty("ephemeris.home");
 		
 		if (ephemerisHomeName == null) {
-			System.err.println("Set property testchebyshevcoefficients.ephemerishome and re-run");
+			System.err.println("Set property ephemeris.home and re-run");
 			System.exit(1);
 		}
 		

@@ -49,7 +49,7 @@ public class SaturnObserver {
 	private boolean usePositionOfDate = Boolean.getBoolean("saturnobserver.usepositionofdate");
 
 	public static void main(String[] args) {
-		String ephemerisHomeName = System.getProperty("saturnobserver.ephemerishome");
+		String ephemerisHomeName = System.getProperty("ephemeris.home");
 		
 		boolean dxy = true;
 		boolean tabulate = false;
@@ -71,7 +71,7 @@ public class SaturnObserver {
 		}
 		
 		if (ephemerisHomeName == null) {
-			System.err.println("Set property saturnobserver.ephemerishome and re-run");
+			System.err.println("Set property ephemeris.home and re-run");
 			System.exit(1);
 		}
 		

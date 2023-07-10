@@ -61,10 +61,10 @@ public class TASS17SimpleController {
 	}
 	
 	private static JPLEphemeris getEphemeris() throws IOException, JPLEphemerisException {
-		String ephemerisHomeName = System.getProperty("tass17simplecontroller.ephemerishome");
+		String ephemerisHomeName = System.getProperty("ephemeris.home");
 		
 		if (ephemerisHomeName == null) {
-			System.err.println("Set property tass17simplecontroller.ephemerishome and re-run");
+			System.err.println("Set property ephemeris.home and re-run");
 			System.exit(1);
 		}
 		
