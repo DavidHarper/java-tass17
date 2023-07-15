@@ -155,17 +155,24 @@ public class GenerateJSONData {
 		
 		double[] coeffs = new double[nCoeffs];
 		
-		System.out.printf("{\n  \"name\":\"%s\",\n  \"jdstart\":%13.5f,\n  \"jdfinish\":%13.5f,\n  \"stepsize\":%13.5f,\n",
+		System.out.printf("{\n  \"name\":\"%s\",\n  \"jdstart\":\"%13.5f\",\n  \"jdfinish\":\"%13.5f\",\n  \"stepsize\":\"%.5f\",\n",
 				idToName[satID], jdStart, jdFinish, stepSize);
 		
 		System.out.println("  \"data\": [");
+		
+		boolean first = true;
 			
 		for (double jd0 = jdStart; jd0 < jdFinish; jd0 += stepSize) {
 			double jd1 = jd0 + stepSize;
 			
 			target.setDateRange(jd0, jd1);
 			
-			System.out.printf("    [ \"jdstart\":%13.5f, \"jdfinish\":%13.5f,\n", jd0, jd1);
+			if (!first)
+				System.out.println("     ,");
+			
+			first = false;
+			
+			System.out.printf("    [ \"%13.5f\", \"%13.5f\",\n", jd0, jd1);
 			
 			for (int iXYZ = 0; iXYZ < 3; iXYZ++) {
 				target.setComponent(iXYZ);
@@ -177,16 +184,15 @@ public class GenerateJSONData {
 					if (i > 0)
 						System.out.print(", ");
 					
-					System.out.printf("%8.3f", coeffs[i]);
+					System.out.printf("\"%.3f\"", coeffs[i]);
 				}
 				
-				System.out.println(" ],");
+				System.out.println(iXYZ < 2 ? " ]," : " ]");
 			}
 			
-			System.out.println("    ],");
+			System.out.println("    ]");
 		}
 		
-		System.out.println("  ]\n};");
+		System.out.println("  ]\n}");
 	}
-
 }
