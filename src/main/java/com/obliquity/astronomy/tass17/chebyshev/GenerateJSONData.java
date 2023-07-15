@@ -31,6 +31,7 @@ public class GenerateJSONData {
 		int satID = -1;
 		double jdStart = 0.0, jdFinish = 0.0, stepSize = 0.0;
 		int nCoeffs = -1;
+		boolean rigorous = true;
 		
 		for (int i = 0; i < args.length; i++) {
 			String keyword = args[i].toLowerCase();
@@ -62,6 +63,10 @@ public class GenerateJSONData {
 				nCoeffs = Integer.parseInt(args[++i]);
 				break;
 				
+			case "-simplified":
+				rigorous = false;
+				break;
+				
 			default:
 				System.err.println("Unknown keyword: " + keyword);
 				System.exit(1);
@@ -74,7 +79,7 @@ public class GenerateJSONData {
 		}
 		
 		try {
-			generateJSONData(satID, jdStart, jdFinish, stepSize, nCoeffs);
+			generateJSONData(satID, jdStart, jdFinish, stepSize, nCoeffs, rigorous);
 		} catch (IOException | JPLEphemerisException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -144,14 +149,14 @@ public class GenerateJSONData {
 			"mimas", "enceladus", "tethys", "dione", "rhea", "titan", "hyperion", "iapetus"
 	};
 	
-	private static void generateJSONData(int satID, double jdStart, double jdFinish, double stepSize, int nCoeffs) throws IOException, JPLEphemerisException {
+	private static void generateJSONData(int satID, double jdStart, double jdFinish, double stepSize, int nCoeffs, boolean rigorous) throws IOException, JPLEphemerisException {
 		JPLEphemeris ephemeris = getEphemeris();
 		
 		TASSTheory theory = new TASSTheory();			
 		
 		SatelliteOffset target = new SatelliteOffset(ephemeris, theory, satID);
 		
-		target.setMethod(SatelliteOffset.RIGOROUS);
+		target.setMethod(rigorous ? SatelliteOffset.RIGOROUS : SatelliteOffset.SIMPLIFIED);
 		
 		double[] coeffs = new double[nCoeffs];
 		
@@ -168,7 +173,7 @@ public class GenerateJSONData {
 			target.setDateRange(jd0, jd1);
 			
 			if (!first)
-				System.out.println("     ,");
+				System.out.println(",");
 			
 			first = false;
 			
@@ -190,9 +195,9 @@ public class GenerateJSONData {
 				System.out.println(iXYZ < 2 ? " ]," : " ]");
 			}
 			
-			System.out.println("    ]");
+			System.out.print("    ]");
 		}
 		
-		System.out.println("  ]\n}");
+		System.out.println("\n  ]\n}");
 	}
 }
