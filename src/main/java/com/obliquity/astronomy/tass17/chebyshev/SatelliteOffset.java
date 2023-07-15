@@ -153,7 +153,7 @@ public class SatelliteOffset implements Evaluatable {
    			
    		offsets[0] = (raSatellite - raSaturn) * Math.cos(decSaturn) * 3600.0 * 180.0/Math.PI;
    		offsets[1] = (decSatellite - decSaturn) * 3600.0 * 180.0/Math.PI;
-   		offsets[2] = gdSatellite - gdSaturn;
+   		offsets[2] = ((gdSatellite - gdSaturn)/gdSaturn) * 3600.0 * 180.0/Math.PI;
 	}
 	
 	private void calculateSimplifiedOffsets(double jd) throws JPLEphemerisException {
