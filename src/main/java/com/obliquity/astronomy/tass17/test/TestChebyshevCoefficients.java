@@ -28,18 +28,91 @@ import com.obliquity.astronomy.tass17.TASSTheory;
 import com.obliquity.astronomy.tass17.chebyshev.SatelliteOffset;
 
 public class TestChebyshevCoefficients {
-	public static void main(String[] args) {
-		if (args.length != 6) {
-			System.err.println("Arguments: satnum component ncoeffs method jdstart jdend");
-			System.exit(1);
+	public static void main(String[] args) {		
+		int iSat = -1;
+		int iXYZ = -1;
+		int nCoeffs = -1;
+		int method = SatelliteOffset.RIGOROUS;
+		int refsys = SatelliteOffset.J2000;
+		double jdstart = 0.0;
+		double jdend = 0.0;
+		double range = 0.0;
+		
+		for (int i = 0; i < args.length; i++) {
+			String keyword = args[i].toLowerCase();
+			
+			switch (keyword) {
+			case "-name":
+			case "-moon":
+			case "-body":
+				iSat = nameToID(args[++i]);
+				break;
+				
+			case "-startdate":
+			case "-start":
+				jdstart = Double.parseDouble(args[++i]);
+				break;
+				
+			case "-enddate":
+			case "-end":
+				jdend = Double.parseDouble(args[++i]);
+				break;
+				
+			case "-range":
+				range = Double.parseDouble(args[++i]);
+				break;
+				
+			case "-ncoeffs":
+			case "-order":
+				nCoeffs = Integer.parseInt(args[++i]);
+				break;
+				
+			case "-simplified":
+				method = SatelliteOffset.SIMPLIFIED;
+				break;
+				
+			case "-rigorous":
+			case "-exact":
+				method = SatelliteOffset.RIGOROUS;
+				
+			case "-x":
+				iXYZ = SatelliteOffset.X_OFFSET;
+				break;
+				
+			case "-y":
+				iXYZ = SatelliteOffset.Y_OFFSET;
+				break;
+				
+			case "-z":
+				iXYZ = SatelliteOffset.Z_OFFSET;
+				break;
+				
+			case "-j2000":
+				refsys = SatelliteOffset.J2000;
+				break;
+				
+			case "-mean":
+				refsys = SatelliteOffset.MEAN;
+				break;
+				
+			case "-of-date":
+				refsys = SatelliteOffset.OF_DATE;
+				break;
+				
+			default:
+				System.err.println("Unknown keyword: " + keyword);
+				System.exit(1);
+			
+			}
 		}
 		
-		int iSat = Integer.parseInt(args[0]);
-		int iXYZ = Integer.parseInt(args[1]);
-		int N = Integer.parseInt(args[2]);
-		int method = Integer.parseInt(args[3]);
-		double jdstart = Double.parseDouble(args[4]);
-		double jdend = Double.parseDouble(args[5]);
+		if (jdstart > 0.0 && range > 0.0)
+			jdend = jdstart + range;
+		
+		if (iXYZ < 0 || iSat < 0 || nCoeffs < 0 || jdstart == 0.0 || jdend == 0.0) {
+			System.err.println("One or more mandatory parameters were not defined");
+			System.exit(1);
+		}
 		
 		String ephemerisHomeName = System.getProperty("ephemeris.home");
 		
@@ -71,18 +144,19 @@ public class TestChebyshevCoefficients {
 			
 			target.setDateRange(jdstart, jdend);
 			target.setMethod(method);
+			target.setReferenceSystem(refsys);
 			
-			double[] coeffs = new double[N];
+			double[] coeffs = new double[nCoeffs];
 			
 			target.setComponent(iXYZ);
 			target.calculateChebyshevCoefficients(coeffs);
 			
-			for (int i = 0; i < N; i++)
+			for (int i = 0; i < nCoeffs; i++)
 				System.out.printf("%3d  %17.13f\n", i, coeffs[i]);
 
 			double djd = (jdend - jdstart)/32.0;
 			
-			double[] T = new double[N];
+			double[] T = new double[nCoeffs];
 			
 			double jd = jdstart;
 				
@@ -95,7 +169,7 @@ public class TestChebyshevCoefficients {
 					
 				double approx = coeffs[0];
 				
-				for (int j = 1; j < N; j++)
+				for (int j = 1; j < nCoeffs; j++)
 					approx += coeffs[j] * T[j];
 				
 				System.out.printf("%13.5f %13.10f %13.4f %13.4f %13.4f\n", jd, x, exact, approx, exact-approx);
@@ -106,4 +180,29 @@ public class TestChebyshevCoefficients {
 			e.printStackTrace();
 		}
 	}
+	
+	private static int nameToID(String name) {
+		String namelc = name.toLowerCase();
+		
+		switch (namelc) {
+			case "mimas": return 0;
+			
+			case "enceladus": return 1;
+			
+			case "tethys": return 2;
+			
+			case "dione": return 3;
+			
+			case "rhea": return 4;
+			
+			case "titan": return 5;
+			
+			case "hyperion": return 6;
+			
+			case "iapetus": return 7;
+			
+			default: return -1;
+		}
+	}
+
 }
