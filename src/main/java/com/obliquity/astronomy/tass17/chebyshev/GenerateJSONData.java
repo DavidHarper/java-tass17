@@ -34,6 +34,7 @@ public class GenerateJSONData {
 		double jdStart = 0.0, jdFinish = 0.0, stepSize = 0.0;
 		int nCoeffs = -1;
 		boolean rigorous = true;
+		int refsys = SatelliteOffset.J2000;
 		
 		for (int i = 0; i < args.length; i++) {
 			String keyword = args[i].toLowerCase();
@@ -68,7 +69,19 @@ public class GenerateJSONData {
 			case "-simplified":
 				rigorous = false;
 				break;
-				
+
+			case "-j2000":
+				refsys = SatelliteOffset.J2000;
+				break;
+
+			case "-mean":
+				refsys = SatelliteOffset.MEAN;
+				break;
+
+			case "-of-date":
+				refsys = SatelliteOffset.OF_DATE;
+				break;
+
 			default:
 				System.err.println("Unknown keyword: " + keyword);
 				System.exit(1);
@@ -81,7 +94,7 @@ public class GenerateJSONData {
 		}
 		
 		try {
-			generateJSONData(satID, jdStart, jdFinish, stepSize, nCoeffs, rigorous);
+			generateJSONData(satID, jdStart, jdFinish, stepSize, nCoeffs, rigorous, refsys);
 		} catch (IOException | JPLEphemerisException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -166,7 +179,7 @@ public class GenerateJSONData {
 			"mimas", "enceladus", "tethys", "dione", "rhea", "titan", "hyperion", "iapetus"
 	};
 	
-	private static void generateJSONData(int satID, double jdStart, double jdFinish, double stepSize, int nCoeffs, boolean rigorous) throws IOException, JPLEphemerisException {
+	private static void generateJSONData(int satID, double jdStart, double jdFinish, double stepSize, int nCoeffs, boolean rigorous, int refsys) throws IOException, JPLEphemerisException {
 		JPLEphemeris ephemeris = getEphemeris();
 		
 		TASSTheory theory = new TASSTheory();			
@@ -174,15 +187,33 @@ public class GenerateJSONData {
 		SatelliteOffset target = new SatelliteOffset(ephemeris, theory, satID);
 		
 		target.setMethod(rigorous ? SatelliteOffset.RIGOROUS : SatelliteOffset.SIMPLIFIED);
+		target.setReferenceSystem(refsys);
 		
 		double[] coeffs = new double[nCoeffs];
 		
-		System.out.printf("{\n  \"name\":\"%s\",\n  \"jdstart\":\"%13.5f\",\n  \"jdfinish\":\"%13.5f\",\n  \"stepsize\":\"%.5f\",\n",
-				idToName[satID], jdStart, jdFinish, stepSize);
+		System.out.printf("{\n  \"name\":\"%s\",\n  \"jdstart\":\"%13.5f\",\n  \"stepsize\":\"%.5f\",\n",
+				idToName[satID], jdStart, stepSize);
 		
-		System.out.println("  \"data\": [");
-		
+		String strRefsys = null;
+
+		switch (refsys) {
+		case SatelliteOffset.J2000:
+			strRefsys = "J2000";
+			break;
+
+		case SatelliteOffset.MEAN:
+			strRefsys = "mean";
+			break;
+
+		case SatelliteOffset.OF_DATE:
+			strRefsys = "of-date";
+			break;
+		}
+
+		System.out.printf("  \"refsys\":\"%s\",\n  \"data\": [", strRefsys);
+
 		boolean first = true;
+		double jdMaximum = 0.0;
 			
 		for (double jd0 = jdStart; jd0 < jdFinish; jd0 += stepSize) {
 			double jd1 = jd0 + stepSize;
@@ -213,8 +244,12 @@ public class GenerateJSONData {
 			}
 			
 			System.out.print("    ]");
+
+			jdMaximum = jd1;
 		}
-		
-		System.out.println("\n  ]\n}");
+
+		System.out.println("\n  ],");
+
+		System.out.printf("  \"jdfinish\":\"%13.5f\"\n}\n", jdMaximum);
 	}
 }
