@@ -36,9 +36,11 @@ import com.obliquity.astronomy.tass17.TASSTheory;
 public class SatelliteOffset implements Evaluatable {
 	public static final int X_OFFSET = 0, Y_OFFSET = 1, Z_OFFSET = 2;
 	public static final int RIGOROUS = 0, SIMPLIFIED = 1;
+	public static final int J2000 = 0, MEAN = 1, OF_DATE = 2;
 	
 	private int method = SIMPLIFIED;
 	private int component = X_OFFSET;
+	private int referenceSystem = J2000;
 	private double tMinimum = 0.0, tMaximum = 0.0;
 	private double[] offsets = new double[3];
 	
@@ -97,6 +99,17 @@ public class SatelliteOffset implements Evaluatable {
 		return method;
 	}
 	
+	public void setReferenceSystem(int refsys) {
+		if (refsys < J2000 || refsys > OF_DATE)
+			throw new IllegalArgumentException("Reference systems should be J2000 or MEAN or OF_DATE");
+		
+		this.referenceSystem = refsys;
+	}
+	
+	public int getReferenceSystem() {
+		return referenceSystem;
+	}
+	
 	public void setComponent(int component) {
 		if (component < 0 || component > 2)
 			throw new IllegalArgumentException("Component index is out of range");
@@ -138,17 +151,49 @@ public class SatelliteOffset implements Evaluatable {
     	}
 	}
 	
+	private double getRightAscension(ApparentPlace ap) {
+		switch (referenceSystem) {
+		case J2000:
+			return ap.getRightAscensionJ2000();
+			
+		case MEAN:
+			return ap.getMeanRightAscension();
+			
+		case OF_DATE:
+			return ap.getRightAscensionOfDate();
+			
+		default:
+			throw new IllegalStateException("referenceSystem has an invalid value");
+		}
+	}
+	
+	private double getDeclination(ApparentPlace ap) {
+		switch (referenceSystem) {
+		case J2000:
+			return ap.getDeclinationJ2000();
+			
+		case MEAN:
+			return ap.getMeanDeclination();
+			
+		case OF_DATE:
+			return ap.getDeclinationOfDate();
+			
+		default:
+			throw new IllegalStateException("referenceSystem has an invalid value");
+		}
+	}
+	
 	private void calculateRigorousOffsets(double jd) throws JPLEphemerisException {
 		apSaturn.calculateApparentPlace(jd);
 		
-		double raSaturn = apSaturn.getRightAscensionJ2000();
-		double decSaturn = apSaturn.getDeclinationJ2000();
+		double raSaturn = getRightAscension(apSaturn);
+		double decSaturn = getDeclination(apSaturn);
   		double gdSaturn = apSaturn.getGeometricDistance();
 
    		apSatellite.calculateApparentPlace(jd);
    			
-   		double raSatellite = apSatellite.getRightAscensionJ2000();
-   		double decSatellite = apSatellite.getDeclinationJ2000();
+   		double raSatellite = getRightAscension(apSatellite);
+   		double decSatellite = getDeclination(apSatellite);
    		double gdSatellite = apSatellite.getGeometricDistance();
    			
    		offsets[0] = (raSatellite - raSaturn) * Math.cos(decSaturn) * 3600.0 * 180.0/Math.PI;
@@ -159,8 +204,8 @@ public class SatelliteOffset implements Evaluatable {
 	private void calculateSimplifiedOffsets(double jd) throws JPLEphemerisException {
 		apSaturn.calculateApparentPlace(jd);
 		
-		double raSaturn = apSaturn.getRightAscensionJ2000();
-		double decSaturn = apSaturn.getDeclinationJ2000();
+		double raSaturn = getRightAscension(apSaturn);
+		double decSaturn = getDeclination(apSaturn);
     	double jdSatellites = jd - apSaturn.getLightTime();
     	
 		double ca = Math.cos(raSaturn);
