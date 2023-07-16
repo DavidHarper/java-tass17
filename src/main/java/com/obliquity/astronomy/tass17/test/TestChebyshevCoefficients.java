@@ -20,7 +20,10 @@ package com.obliquity.astronomy.tass17.test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import com.obliquity.astronomy.almanac.AstronomicalDate;
 import com.obliquity.astronomy.almanac.JPLEphemeris;
 import com.obliquity.astronomy.almanac.JPLEphemerisException;
 import com.obliquity.astronomy.almanac.chebyshev.Chebyshev;
@@ -50,12 +53,12 @@ public class TestChebyshevCoefficients {
 				
 			case "-startdate":
 			case "-start":
-				jdstart = Double.parseDouble(args[++i]);
+				jdstart = parseDate(args[++i]);
 				break;
 				
 			case "-enddate":
 			case "-end":
-				jdend = Double.parseDouble(args[++i]);
+				jdend = parseDate(args[++i]);
 				break;
 				
 			case "-range":
@@ -102,7 +105,6 @@ public class TestChebyshevCoefficients {
 			default:
 				System.err.println("Unknown keyword: " + keyword);
 				System.exit(1);
-			
 			}
 		}
 		
@@ -181,6 +183,36 @@ public class TestChebyshevCoefficients {
 		}
 	}
 	
+	private static final Pattern jdPattern = Pattern.compile("(\\d+(\\.)?(\\d+)?)");
+	private static final Pattern dateTimePattern = Pattern.compile("(\\d{4})-(\\d{2})\\-(\\d{2})(\\s+(\\d{2}):(\\d{2}))?");
+
+	private static double parseDate(String datestr) {
+		Matcher matcher = jdPattern.matcher(datestr);
+
+		if (matcher.matches())
+			return Double.parseDouble(datestr);
+
+		matcher = dateTimePattern.matcher(datestr);
+
+		if (!matcher.matches())
+			throw new IllegalArgumentException("String \"" + datestr + "\" cannot be parsed as a date/time or a Julian Day Number");
+
+		int year = Integer.parseInt(matcher.group(1));
+		int month = Integer.parseInt(matcher.group(2));
+		int day = Integer.parseInt(matcher.group(3));
+
+		String strHour = matcher.group(5);
+		String strMinute = matcher.group(6);
+
+		int hour = strHour != null ? Integer.parseInt(strHour) : 0;
+		int minute = strMinute != null ? Integer.parseInt(strMinute) : 0;
+		double seconds = 0.0;
+
+		AstronomicalDate ad = new AstronomicalDate(year, month, day, hour, minute, seconds);
+
+		return ad.getJulianDate();
+	}
+
 	private static int nameToID(String name) {
 		String namelc = name.toLowerCase();
 		
