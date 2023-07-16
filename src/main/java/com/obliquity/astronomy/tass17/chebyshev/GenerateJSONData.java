@@ -20,6 +20,8 @@ package com.obliquity.astronomy.tass17.chebyshev;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.obliquity.astronomy.almanac.AstronomicalDate;
 import com.obliquity.astronomy.almanac.JPLEphemeris;
@@ -86,18 +88,33 @@ public class GenerateJSONData {
 		}
 	}
 
+	private static final Pattern jdPattern = Pattern.compile("(\\d+(\\.)?(\\d+)?)");
+	private static final Pattern dateTimePattern = Pattern.compile("(\\d{4})-(\\d{2})\\-(\\d{2})(\\s+(\\d{2}):(\\d{2}))?");
+
 	private static double parseDate(String datestr) {
-		String[] words = datestr.split("-");
-		
-		if (words.length < 3)
-			return -1.0;
-		
-		int year = Integer.parseInt(words[0]);
-		int month = Integer.parseInt(words[1]);
-		int day = Integer.parseInt(words[2]);
-		
-		AstronomicalDate ad = new AstronomicalDate(year, month, day);
-		
+		Matcher matcher = jdPattern.matcher(datestr);
+
+		if (matcher.matches())
+			return Double.parseDouble(datestr);
+
+		matcher = dateTimePattern.matcher(datestr);
+
+		if (!matcher.matches())
+			throw new IllegalArgumentException("String \"" + datestr + "\" cannot be parsed as a date/time or a Julian Day Number");
+
+		int year = Integer.parseInt(matcher.group(1));
+		int month = Integer.parseInt(matcher.group(2));
+		int day = Integer.parseInt(matcher.group(3));
+
+		String strHour = matcher.group(5);
+		String strMinute = matcher.group(6);
+
+		int hour = strHour != null ? Integer.parseInt(strHour) : 0;
+		int minute = strMinute != null ? Integer.parseInt(strMinute) : 0;
+		double seconds = 0.0;
+
+		AstronomicalDate ad = new AstronomicalDate(year, month, day, hour, minute, seconds);
+
 		return ad.getJulianDate();
 	}
 
