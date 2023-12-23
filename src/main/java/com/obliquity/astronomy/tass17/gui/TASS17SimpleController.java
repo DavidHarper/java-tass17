@@ -152,6 +152,20 @@ public class TASS17SimpleController {
 		
 		System.out.println();
 	}
+	
+	private static String[] helpText = {
+			"<JD> : display at the specified Julian Date",
+			"<Y M D h m> : display at the specified date and time",
+			"step (or <ENTER>) : advance by one step",
+			"stepsize S : set stepsize to S",
+			"now : display at current date and time",
+			"scale S : set scale to S",
+			"centre X Y : centre display at offset (X,Y)",
+			"auto : auto-centre display",
+			"animate N S P : animate for N steps with stepsize S and pause P milliseconds between steps",
+			"show : show the current model parameters on standard output",
+			"quit or exit : exit the program"
+	};
 
 	public void run() throws IOException, JPLEphemerisException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -176,6 +190,11 @@ public class TASS17SimpleController {
     		}
     		
     		switch (command) {
+    		case "help":
+    			for (String text : helpText)
+    				System.out.println(text);
+    			break;
+    			
     		case "scale":
     			double scale = Double.parseDouble(words[1]);
     			setScale(scale);
